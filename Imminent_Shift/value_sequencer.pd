@@ -19,15 +19,15 @@
 #X msg 346 453 \$1 15;
 #X floatatom 329 139 5 0 0 0 - #0-AUTOMATION_SCALED -;
 #X obj 121 195 hradio 15 1 0 16 \$0-POS \$0-SET_POS empty -20 7 0 10
--262144 -1 -1 11;
+-262144 -1 -1 7;
 #X floatatom 203 120 5 0 22 0 DEST #0-SET_DESTINATION #0-DESTINATION
 ;
 #X obj 103 103 tgl 15 0 \$0-EN \$0-SET_EN EN 1 7 0 10 -262144 -1 -1
 1 1;
 #X obj 122 139 hradio 15 1 0 8 \$0-DIV \$0-SET_DIV DIV -20 8 0 10 -262144
--1 -1 0;
+-1 -1 1;
 #X obj 121 159 hradio 15 1 0 16 \$0-MIN \$0-SET_MIN MIN -20 7 0 10
--262144 -1 -1 4;
+-262144 -1 -1 0;
 #X obj 121 177 hradio 15 1 0 16 \$0-MAX \$0-SET_MAX MAX -20 7 0 10
 -262144 -1 -1 15;
 #X floatatom 287 139 5 0 0 0 POS #0-SET_POS -;
@@ -45,7 +45,7 @@
 \$1-SET_VALUE_6 0 \; \$1-SET_VALUE_7 0 \; \$1-SET_VALUE_8 0 \; \$1-SET_VALUE_9
 0 \; \$1-SET_VALUE_10 0 \; \$1-SET_VALUE_11 0 \; \$1-SET_VALUE_12 0
 \; \$1-SET_VALUE_13 0 \; \$1-SET_VALUE_14 0 \; \$1-SET_VALUE_15 0;
-#N canvas 0 0 667 709 ROUTING 0;
+#N canvas 0 22 1519 906 ROUTING 0;
 #X obj 797 185 s \$0-ROUTE_SYMBOL;
 #X obj 797 -267 r \$0-DESTINATION;
 #X obj 827 107 s \$0-ROUTE_SYMBOL;
@@ -115,17 +115,13 @@
 #X obj 75 138 s \$0-AUTOMATION_SCALED;
 #X obj 98 21 i;
 #X obj 91 61 s \$0-AUTOMATION_SCALED;
-#X obj 98 1 * 63;
 #X obj 114 -58 i;
 #X obj 107 -18 s \$0-AUTOMATION_SCALED;
-#X obj 114 -78 * 63;
 #X obj 114 -38 s SET_TAP_2;
 #X obj 130 -137 i;
 #X obj 123 -97 s \$0-AUTOMATION_SCALED;
-#X obj 130 -157 * 63;
 #X obj 146 -216 i;
 #X obj 139 -176 s \$0-AUTOMATION_SCALED;
-#X obj 146 -236 * 63;
 #X obj 257 50 i;
 #X obj 250 88 s \$0-AUTOMATION_SCALED;
 #X obj 257 31 * 15;
@@ -161,6 +157,10 @@
 #X obj 50 273 s SET_PITCH_MULITPLIER;
 #X obj 130 -117 s SET_TAP_3;
 #X obj 146 -196 s SET_TAP_4;
+#X obj 130 -157 * 31;
+#X obj 114 -78 * 31;
+#X obj 98 1 * 31;
+#X obj 146 -236 * 31;
 #X connect 1 0 36 0;
 #X connect 18 0 19 0;
 #X connect 19 0 26 0;
@@ -173,22 +173,22 @@
 #X connect 26 0 35 0;
 #X connect 27 0 33 0;
 #X connect 33 0 54 0;
-#X connect 33 1 111 0;
+#X connect 33 1 107 0;
 #X connect 33 2 60 0;
 #X connect 33 3 63 0;
 #X connect 33 4 64 0;
-#X connect 33 5 69 0;
-#X connect 33 6 72 0;
-#X connect 33 7 76 0;
-#X connect 33 8 79 0;
-#X connect 33 9 82 0;
-#X connect 33 10 100 0;
-#X connect 33 11 103 0;
-#X connect 33 12 106 0;
-#X connect 33 13 85 0;
-#X connect 33 14 88 0;
-#X connect 33 15 91 0;
-#X connect 33 16 94 0;
+#X connect 33 5 113 0;
+#X connect 33 6 112 0;
+#X connect 33 7 111 0;
+#X connect 33 8 114 0;
+#X connect 33 9 78 0;
+#X connect 33 10 96 0;
+#X connect 33 11 99 0;
+#X connect 33 12 102 0;
+#X connect 33 13 81 0;
+#X connect 33 14 84 0;
+#X connect 33 15 87 0;
+#X connect 33 16 90 0;
 #X connect 35 0 25 0;
 #X connect 36 0 39 0;
 #X connect 36 1 38 0;
@@ -228,7 +228,7 @@
 #X connect 55 0 28 0;
 #X connect 55 0 56 0;
 #X connect 58 0 59 0;
-#X connect 58 0 112 0;
+#X connect 58 0 108 0;
 #X connect 60 0 58 0;
 #X connect 61 0 62 0;
 #X connect 61 0 29 0;
@@ -238,42 +238,42 @@
 #X connect 65 0 66 0;
 #X connect 67 0 68 0;
 #X connect 67 0 31 0;
-#X connect 69 0 67 0;
-#X connect 70 0 71 0;
-#X connect 70 0 73 0;
-#X connect 72 0 70 0;
+#X connect 69 0 70 0;
+#X connect 69 0 71 0;
+#X connect 72 0 73 0;
+#X connect 72 0 109 0;
 #X connect 74 0 75 0;
-#X connect 74 0 113 0;
-#X connect 76 0 74 0;
-#X connect 77 0 78 0;
-#X connect 77 0 114 0;
-#X connect 79 0 77 0;
-#X connect 80 0 81 0;
-#X connect 80 0 32 0;
-#X connect 82 0 80 0;
-#X connect 83 0 84 0;
-#X connect 83 0 34 0;
-#X connect 85 0 83 0;
-#X connect 86 0 87 0;
-#X connect 86 0 95 0;
-#X connect 88 0 86 0;
-#X connect 89 0 90 0;
-#X connect 89 0 96 0;
-#X connect 91 0 89 0;
-#X connect 92 0 93 0;
-#X connect 92 0 97 0;
-#X connect 94 0 92 0;
-#X connect 98 0 99 0;
-#X connect 98 0 109 0;
-#X connect 100 0 98 0;
-#X connect 101 0 102 0;
-#X connect 101 0 108 0;
-#X connect 103 0 101 0;
-#X connect 104 0 105 0;
-#X connect 104 0 107 0;
-#X connect 106 0 104 0;
-#X connect 111 0 57 0;
-#X connect 111 0 110 0;
+#X connect 74 0 110 0;
+#X connect 76 0 77 0;
+#X connect 76 0 32 0;
+#X connect 78 0 76 0;
+#X connect 79 0 80 0;
+#X connect 79 0 34 0;
+#X connect 81 0 79 0;
+#X connect 82 0 83 0;
+#X connect 82 0 91 0;
+#X connect 84 0 82 0;
+#X connect 85 0 86 0;
+#X connect 85 0 92 0;
+#X connect 87 0 85 0;
+#X connect 88 0 89 0;
+#X connect 88 0 93 0;
+#X connect 90 0 88 0;
+#X connect 94 0 95 0;
+#X connect 94 0 105 0;
+#X connect 96 0 94 0;
+#X connect 97 0 98 0;
+#X connect 97 0 104 0;
+#X connect 99 0 97 0;
+#X connect 100 0 101 0;
+#X connect 100 0 103 0;
+#X connect 102 0 100 0;
+#X connect 107 0 57 0;
+#X connect 107 0 106 0;
+#X connect 111 0 72 0;
+#X connect 112 0 69 0;
+#X connect 113 0 67 0;
+#X connect 114 0 74 0;
 #X restore 213 553 pd ROUTING;
 #X msg 1081 95 \; \$1-SET_VALUE_0 1 \; \$1-SET_VALUE_1 1 \; \$1-SET_VALUE_2
 1 \; \$1-SET_VALUE_3 1 \; \$1-SET_VALUE_4 1 \; \$1-SET_VALUE_5 1 \;
@@ -281,48 +281,56 @@
 1 \; \$1-SET_VALUE_10 1 \; \$1-SET_VALUE_11 1 \; \$1-SET_VALUE_12 1
 \; \$1-SET_VALUE_13 1 \; \$1-SET_VALUE_14 1 \; \$1-SET_VALUE_15 1;
 #N canvas 75 84 920 464 COUNTER_CONTROLS 0;
-#X obj 170 192 i;
-#X obj 602 150 tabread \$0-sequence;
-#X obj 601 252 pack f f;
-#X obj 601 233 i;
-#X obj 616 214 r \$0-DESTINATION;
-#X obj 601 195 t b;
-#X obj 646 233 r \$0-AUTOMATION;
-#X obj 602 169 s \$0-AUTOMATION;
-#X obj 283 259 s \$0-INDEX;
-#X obj 602 131 r \$0-INDEX;
-#X obj 197 192 + 1;
-#X msg 204 211 0;
-#X obj 170 230 sel 1;
-#X obj 170 211 >= 0;
-#X obj 170 114 r MASTER_CLOCK;
-#X obj 170 152 spigot;
-#X obj 191 171 r \$0-DIV;
-#X obj 170 249 s \$0-LOCAL_CLOCK;
-#X obj 203 133 r \$0-EN;
-#X obj 275 79 r \$0-LOCAL_CLOCK;
-#X obj 291 240 s \$0-SET_POS;
-#X msg 291 217 set \$1;
-#X obj 282 100 r \$0-POS;
-#X msg 282 120 goto \$1;
-#X obj 438 151 r \$0-MIN;
-#X obj 512 134 r \$0-MAX;
-#X msg 512 153 max \$1;
-#X obj 290 193 counter 0 31;
-#X msg 423 189 min \$1;
-#X obj 423 170 i;
-#X obj 472 210 sel 1;
-#X msg 472 230 0;
-#X msg 499 229 1;
-#X obj 472 189 i 1;
-#X obj 472 170 t b;
-#X obj 396 151 spigot;
-#X obj 396 131 r \$0-LOCAL_CLOCK;
-#X obj 512 173 s \$0-counter;
-#X obj 423 250 s \$0-counter;
-#X obj 290 142 r \$0-counter;
-#X obj 307 166 r \$0-DIRECTION;
-#X obj 600 276 s \$0-ROUTING;
+#X obj 170 231 i;
+#X obj 693 149 tabread \$0-sequence;
+#X obj 692 251 pack f f;
+#X obj 692 232 i;
+#X obj 707 213 r \$0-DESTINATION;
+#X obj 692 194 t b;
+#X obj 737 232 r \$0-AUTOMATION;
+#X obj 693 168 s \$0-AUTOMATION;
+#X obj 374 258 s \$0-INDEX;
+#X obj 693 130 r \$0-INDEX;
+#X obj 197 231 + 1;
+#X msg 204 250 0;
+#X obj 170 269 sel 1;
+#X obj 170 250 >= 0;
+#X obj 170 75 r MASTER_CLOCK;
+#X obj 170 113 spigot;
+#X obj 191 142 r \$0-DIV;
+#X obj 170 288 s \$0-LOCAL_CLOCK;
+#X obj 203 94 r \$0-EN;
+#X obj 366 78 r \$0-LOCAL_CLOCK;
+#X obj 382 239 s \$0-SET_POS;
+#X msg 382 216 set \$1;
+#X obj 373 99 r \$0-POS;
+#X msg 373 119 goto \$1;
+#X obj 529 150 r \$0-MIN;
+#X obj 603 133 r \$0-MAX;
+#X msg 603 152 max \$1;
+#X obj 381 192 counter 0 31;
+#X msg 514 188 min \$1;
+#X obj 514 169 i;
+#X obj 563 209 sel 1;
+#X msg 563 229 0;
+#X msg 590 228 1;
+#X obj 563 188 i 1;
+#X obj 563 169 t b;
+#X obj 487 150 spigot;
+#X obj 487 130 r \$0-LOCAL_CLOCK;
+#X obj 603 172 s \$0-counter;
+#X obj 514 249 s \$0-counter;
+#X obj 381 141 r \$0-counter;
+#X obj 398 165 r \$0-DIRECTION;
+#X obj 691 275 s \$0-ROUTING;
+#X obj 67 91 r \$0-DIV_MULT;
+#X obj 191 203 i;
+#X obj 234 199 i;
+#X obj 67 114 sel 0 1;
+#X obj 88 207 spigot;
+#X obj 88 235 spigot;
+#X obj 38 157 expr ! $f1;
+#X obj 234 223 expr pow($f1 \, 2);
 #X connect 0 0 10 0;
 #X connect 0 0 13 0;
 #X connect 1 0 7 0;
@@ -340,7 +348,10 @@
 #X connect 13 0 12 0;
 #X connect 14 0 15 0;
 #X connect 15 0 0 0;
-#X connect 16 0 13 1;
+#X connect 16 0 43 1;
+#X connect 16 0 44 1;
+#X connect 16 0 46 0;
+#X connect 16 0 47 0;
 #X connect 18 0 15 1;
 #X connect 19 0 27 0;
 #X connect 21 0 20 0;
@@ -366,6 +377,17 @@
 #X connect 36 0 35 0;
 #X connect 39 0 27 0;
 #X connect 40 0 27 1;
+#X connect 42 0 45 0;
+#X connect 42 0 48 0;
+#X connect 42 0 47 1;
+#X connect 43 0 13 1;
+#X connect 44 0 49 0;
+#X connect 45 0 43 0;
+#X connect 45 1 44 0;
+#X connect 46 0 43 0;
+#X connect 47 0 44 0;
+#X connect 48 0 46 1;
+#X connect 49 0 13 1;
 #X restore 213 573 pd COUNTER_CONTROLS;
 #X obj 1081 72 \$0;
 #X obj 1081 48 r \$0-ALL_PATTERN_1;
@@ -375,40 +397,42 @@
 #X obj 139 103 bng 15 250 50 0 \$0-ALL_PATTERN_1 empty 1 4 8 0 10 -262144
 -1 -1;
 #X obj 121 215 vsl 15 200 0 1 0 0 \$0-VALUE_0 \$0-SET_VALUE_0 0 4 8
-0 10 -262144 -1 -1 10800 0;
+0 10 -262144 -1 -1 4500 0;
 #X obj 136 215 vsl 15 200 0 1 0 0 \$0-VALUE_1 \$0-SET_VALUE_1 1 4 8
-0 10 -262144 -1 -1 13800 0;
+0 10 -262144 -1 -1 2600 0;
 #X obj 151 215 vsl 15 200 0 1 0 0 \$0-VALUE_2 \$0-SET_VALUE_2 2 4 8
-0 10 -262144 -1 -1 10800 0;
+0 10 -262144 -1 -1 1400 0;
 #X obj 166 215 vsl 15 200 0 1 0 0 \$0-VALUE_3 \$0-SET_VALUE_3 3 4 8
-0 10 -262144 -1 -1 13200 0;
+0 10 -262144 -1 -1 0 0;
 #X obj 181 215 vsl 15 200 0 1 0 0 \$0-VALUE_4 \$0-SET_VALUE_4 4 4 8
-0 10 -262144 -1 -1 11400 0;
+0 10 -262144 -1 -1 13300 0;
 #X obj 196 215 vsl 15 200 0 1 0 0 \$0-VALUE_5 \$0-SET_VALUE_5 5 4 8
-0 10 -262144 -1 -1 10700 0;
+0 10 -262144 -1 -1 10900 0;
 #X obj 211 215 vsl 15 200 0 1 0 0 \$0-VALUE_6 \$0-SET_VALUE_6 6 4 8
-0 10 -262144 -1 -1 12300 0;
+0 10 -262144 -1 -1 11300 0;
 #X obj 226 215 vsl 15 200 0 1 0 0 \$0-VALUE_7 \$0-SET_VALUE_7 7 4 8
-0 10 -262144 -1 -1 14000 0;
+0 10 -262144 -1 -1 8400 0;
 #X obj 241 215 vsl 15 200 0 1 0 0 \$0-VALUE_8 \$0-SET_VALUE_8 8 4 8
-0 10 -262144 -1 -1 9400 0;
+0 10 -262144 -1 -1 10000 0;
 #X obj 256 215 vsl 15 200 0 1 0 0 \$0-VALUE_9 \$0-SET_VALUE_9 9 4 8
-0 10 -262144 -1 -1 8200 0;
+0 10 -262144 -1 -1 17600 0;
 #X obj 271 215 vsl 15 200 0 1 0 0 \$0-VALUE_10 \$0-SET_VALUE_10 10
-1 8 0 10 -262144 -1 -1 11600 0;
+1 8 0 10 -262144 -1 -1 12100 0;
 #X obj 286 215 vsl 15 200 0 1 0 0 \$0-VALUE_11 \$0-SET_VALUE_11 11
-1 8 0 10 -262144 -1 -1 11600 0;
+1 8 0 10 -262144 -1 -1 9000 0;
 #X obj 301 215 vsl 15 200 0 1 0 0 \$0-VALUE_12 \$0-SET_VALUE_12 12
-1 8 0 10 -262144 -1 -1 14600 0;
+1 8 0 10 -262144 -1 -1 7300 0;
 #X obj 316 215 vsl 15 200 0 1 0 0 \$0-VALUE_13 \$0-SET_VALUE_13 13
-1 8 0 10 -262144 -1 -1 13200 0;
+1 8 0 10 -262144 -1 -1 11900 0;
 #X obj 331 215 vsl 15 200 0 1 0 0 \$0-VALUE_14 \$0-SET_VALUE_14 14
-1 8 0 10 -262144 -1 -1 12800 0;
+1 8 0 10 -262144 -1 -1 5400 0;
 #X obj 346 215 vsl 15 200 0 1 0 0 \$0-VALUE_15 \$0-SET_VALUE_15 15
-1 8 0 10 -262144 -1 -1 13200 0;
+1 8 0 10 -262144 -1 -1 1600 0;
 #X obj 213 534 table \$0-sequence 16;
+#X obj 247 139 tgl 15 0 \$0-DIV_MULT \$0-SET_DIV_MULT /2 2 7 0 10 -262144
+-1 -1 0 1;
 #X msg 789 136 \; \$1-SET_MAX 31 \; \$1-SET_MIN 0 \; \$1-SET_DIV 3
-\; \$1-SET_DESTINATION 0;
+\; \$1-SET_DESTINATION 0 \; \$1-SET_DIV_MULT 0;
 #X connect 1 0 2 0;
 #X connect 2 0 0 0;
 #X connect 2 1 0 1;
@@ -427,7 +451,7 @@
 #X connect 15 0 2 0;
 #X connect 16 0 2 0;
 #X connect 17 0 2 0;
-#X connect 27 0 58 0;
+#X connect 27 0 59 0;
 #X connect 27 0 32 0;
 #X connect 28 0 27 0;
 #X connect 36 0 34 0;
