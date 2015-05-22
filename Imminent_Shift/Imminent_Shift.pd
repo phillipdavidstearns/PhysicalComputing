@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #N canvas 172 165 1357 796 10;
+=======
+#N canvas 993 216 1357 705 10;
+>>>>>>> origin/master
 #N canvas 283 412 903 324 serial_port 0;
 #X msg 190 178 close;
 #X obj 190 156 loadbang;
@@ -15,27 +19,31 @@ in the console;
 #X text 304 178 send things to the serial port via "to_serial" send
 symbol;
 #X obj 245 156 spigot;
-#X obj 190 200 comport 2 9600;
 #X msg 142 178 open 2;
+#X obj 190 200 comport 2 9600;
 #X connect 0 0 6 0;
-#X connect 0 0 12 0;
+#X connect 0 0 13 0;
 #X connect 1 0 0 0;
 #X connect 3 0 11 0;
 #X connect 4 0 7 0;
 #X connect 4 0 11 1;
 #X connect 5 0 4 0;
 #X connect 6 0 4 0;
-#X connect 7 0 13 0;
+#X connect 7 0 12 0;
 #X connect 7 1 0 0;
-#X connect 11 0 12 0;
-#X connect 12 0 2 0;
-#X connect 13 0 5 0;
-#X connect 13 0 12 0;
+#X connect 11 0 13 0;
+#X connect 12 0 5 0;
+#X connect 12 0 13 0;
+#X connect 13 0 2 0;
 #X coords 0 -1 1 1 120 22 2 100 100;
 #X restore -17 -144 pd serial_port;
 #N canvas 0 22 1366 725 master_clock 0;
 #X obj 125 104 hsl 240 15 15 250 0 0 MASTER_CLOCK_TEMPO SET_MASTER_CLOCK_TEMPO
+<<<<<<< HEAD
 MASTER_CLOCK_BPM 2 8 0 10 -262144 -1 -1 10679 1;
+=======
+MASTER_CLOCK_BPM 2 8 0 10 -262144 -1 -1 9900 1;
+>>>>>>> origin/master
 #X floatatom 368 103 5 0 0 0 - - -;
 #X floatatom 341 176 5 0 0 0 - - -;
 #X msg 133 54 120;
@@ -50,7 +58,11 @@ MASTER_CLOCK_BPM 2 8 0 10 -262144 -1 -1 10679 1;
 #X obj 789 448 t b;
 #X floatatom 739 580 8 0 0 0 - - -;
 #X obj 414 104 hradio 15 1 0 8 DIV SET_DIV * -10 8 0 10 -262144 -1
+<<<<<<< HEAD
 -1 0;
+=======
+-1 3;
+>>>>>>> origin/master
 #X obj 552 104 hradio 15 1 0 8 MULT SET_MULT / -10 8 0 10 -262144 -1
 -1 0;
 #X obj 789 544 s MASTER_TEMPO;
@@ -319,6 +331,7 @@ empty 0 -8 0 10 -262144 -1 -1 0;
 125 \; SET_LOCAL_CLOCK_3_RATE 125 \; SET_LOCAL_CLOCK_4_RATE 125;
 #X obj 51 282 loadbang;
 #X obj 105 282 r LOCAL_CLOCK_RESET;
+<<<<<<< HEAD
 #X obj 1359 632 s to_serial;
 #X obj 1359 612 pack f f;
 #X obj 1560 538 t b;
@@ -357,6 +370,13 @@ empty 0 -8 0 10 -262144 -1 -1 0;
 #X obj 136 195 tgl 15 0 MOD_2 SET_MOD_2 MOD_2 -32 7 0 10 -262144 -1
 -1 0 1;
 #X obj 136 213 tgl 15 0 MOD_3 SET_MOD_3 MOD_3 -32 7 0 10 -262144 -1
+=======
+#X obj 136 103 tgl 15 0 MOD_1 SET_MOD_1 MOD_1 -32 7 0 10 -262144 -1
+-1 1 1;
+#X obj 136 121 tgl 15 0 MOD_2 SET_MOD_2 MOD_2 -32 7 0 10 -262144 -1
+-1 1 1;
+#X obj 136 139 tgl 15 0 MOD_3 SET_MOD_3 MOD_3 -32 7 0 10 -262144 -1
+>>>>>>> origin/master
 -1 0 1;
 #X obj 136 231 tgl 15 0 MOD_4 SET_MOD_4 MOD_4 -32 7 0 10 -262144 -1
 -1 0 1;
@@ -366,16 +386,25 @@ empty 0 -8 0 10 -262144 -1 -1 0;
 -1 -1 0 1;
 #X obj 174 213 tgl 15 0 MOD_3_EN_R SET_MOD_3_EN_R R 4 8 0 10 -262144
 -1 -1 0 1;
+<<<<<<< HEAD
 #X obj 155 213 tgl 15 0 MOD_3_EN_L SET_MOD_3_EN_L L 4 8 0 10 -262144
 -1 -1 0 1;
 #X obj 174 231 tgl 15 0 MOD_4_EN_R SET_MOD_4_EN_R R 4 8 0 10 -262144
 -1 -1 0 1;
 #X obj 155 231 tgl 15 0 MOD_4_EN_L SET_MOD_4_EN_L L 4 8 0 10 -262144
+=======
+#X obj 155 139 tgl 15 0 MOD_3_EN_L SET_MOD_3_EN_L L 4 8 0 10 -262144
+-1 -1 1 1;
+#X obj 174 157 tgl 15 0 MOD_4_EN_R SET_MOD_4_EN_R R 4 8 0 10 -262144
+-1 -1 1 1;
+#X obj 155 157 tgl 15 0 MOD_4_EN_L SET_MOD_4_EN_L L 4 8 0 10 -262144
+>>>>>>> origin/master
 -1 -1 0 1;
 #X obj 174 177 tgl 15 0 MOD_1_EN_R SET_MOD_1_EN_R R 4 8 0 10 -262144
 -1 -1 0 1;
 #X obj 155 177 tgl 15 0 MOD_1_EN_L SET_MOD_1_EN_L L 4 8 0 10 -262144
 -1 -1 1 1;
+<<<<<<< HEAD
 #X obj 193 177 hradio 15 1 0 16 MOD_1_DIV SET_MOD_1_DIV MOD_1_DIV 242
 8 0 10 -262144 -1 -1 0;
 #X obj 193 195 hradio 15 1 0 16 MOD_2_DIV SET_MOD_2_DIV MOD_2_DIV 242
@@ -411,6 +440,43 @@ LOCAL_CLOCK_4_RATE 2 8 0 10 -262144 -1 -1 0 0;
 #X obj 607 177 tgl 15 0 MASTER_LOCAL_CLOCK_EN SET_MASTER_LOCAL_CLOCK_EN
 EN_ALL 1 8 0 10 -262144 -1 -1 0 1;
 #X obj 607 195 bng 15 250 50 0 LOCAL_CLOCK_RESET empty R 4 8 0 10 -262144
+=======
+#X obj 193 103 hradio 15 1 0 16 MOD_1_DIV SET_MOD_1_DIV MOD_1_DIV 242
+8 0 10 -262144 -1 -1 2;
+#X obj 193 121 hradio 15 1 0 16 MOD_2_DIV SET_MOD_2_DIV MOD_2_DIV 242
+8 0 10 -262144 -1 -1 1;
+#X obj 193 139 hradio 15 1 0 16 MOD_3_DIV SET_MOD_3_DIV MOD_3_DIV 242
+8 0 10 -262144 -1 -1 2;
+#X obj 193 157 hradio 15 1 0 16 MOD_4_DIV SET_MOD_4_DIV MOD_4_DIV 242
+8 0 10 -262144 -1 -1 1;
+#X obj 646 103 tgl 15 0 LOCAL_CLOCK_1_EN SET_LOCAL_CLOCK_1_EN EN 1
+8 0 10 -262144 -1 -1 0 1;
+#X obj 666 103 hsl 500 15 1000 5 0 0 LOCAL_CLOCK_1_RATE SET_LOCAL_CLOCK_1_RATE
+LOCAL_CLOCK_1_RATE 2 8 0 10 -262144 -1 -1 43882 0;
+#X obj 491 103 hradio 15 1 0 3 CLOCK_SEL_1 SET_CLOCK_SEL_1 CLOCK_SEL_1
+47 8 0 10 -262144 -1 -1 2;
+#X obj 491 139 hradio 15 1 0 3 CLOCK_SEL_3 SET_CLOCK_SEL_3 CLOCK_SEL_3
+47 8 0 10 -262144 -1 -1 1;
+#X obj 491 121 hradio 15 1 0 3 CLOCK_SEL_2 SET_CLOCK_SEL_2 CLOCK_SEL_2
+47 8 0 10 -262144 -1 -1 2;
+#X obj 491 157 hradio 15 1 0 3 CLOCK_SEL_4 SET_CLOCK_SEL_4 CLOCK_SEL_4
+47 8 0 10 -262144 -1 -1 1;
+#X obj 646 121 tgl 15 0 LOCAL_CLOCK_2_EN SET_LOCAL_CLOCK_2_EN EN 1
+8 0 10 -262144 -1 -1 0 1;
+#X obj 666 121 hsl 500 15 1000 5 0 0 LOCAL_CLOCK_2_RATE SET_LOCAL_CLOCK_2_RATE
+LOCAL_CLOCK_2_RATE 2 8 0 10 -262144 -1 -1 43882 0;
+#X obj 646 139 tgl 15 0 LOCAL_CLOCK_3_EN SET_LOCAL_CLOCK_3_EN EN 1
+8 0 10 -262144 -1 -1 0 1;
+#X obj 666 139 hsl 500 15 1000 5 0 0 LOCAL_CLOCK_3_RATE SET_LOCAL_CLOCK_3_RATE
+LOCAL_CLOCK_3_RATE 2 8 0 10 -262144 -1 -1 43882 0;
+#X obj 646 157 tgl 15 0 LOCAL_CLOCK_4_EN SET_LOCAL_CLOCK_4_EN EN 1
+8 0 10 -262144 -1 -1 0 1;
+#X obj 666 157 hsl 500 15 1000 5 0 0 LOCAL_CLOCK_4_RATE SET_LOCAL_CLOCK_4_RATE
+LOCAL_CLOCK_4_RATE 2 8 0 10 -262144 -1 -1 43882 0;
+#X obj 607 103 tgl 15 0 MASTER_LOCAL_CLOCK_EN SET_MASTER_LOCAL_CLOCK_EN
+EN_ALL 1 8 0 10 -262144 -1 -1 1 1;
+#X obj 607 121 bng 15 250 50 0 LOCAL_CLOCK_RESET empty R 4 8 0 10 -262144
+>>>>>>> origin/master
 -1 -1;
 #X floatatom 162 103 5 0 4095 0 MOD1_RATE #0-SET_MOD1_RATE #0-MOD1_RATE
 ;
@@ -629,10 +695,17 @@ empty -2 -8 0 10 -262144 -1 -1 12700 0;
 #X obj 122 276 s SET_NOTE;
 #X obj 510 319 s SET_uS;
 #X obj 233 104 hsl 1025 15 4096 0 0 0 PITCH_CONTROL_FINE SET_PITCH_CONTROL_FINE
+<<<<<<< HEAD
 Fine_Pitch -2 7 0 10 -262144 -1 -1 97800 0;
 #X obj 1262 104 hradio 15 1 0 10 PITCH_MULITPLIER SET_PITCH_MULITPLIER
 DIV 152 8 0 10 -262144 -1 -1 2;
 #X obj 103 104 tgl 15 0 NOTE SET_NOTE EN 1 8 0 10 -262144 -1 -1 1 1
+=======
+Fine_Pitch -2 7 0 10 -262144 -1 -1 89600 0;
+#X obj 1262 104 hradio 15 1 0 10 PITCH_MULITPLIER SET_PITCH_MULITPLIER
+DIV 152 8 0 10 -262144 -1 -1 1;
+#X obj 103 104 tgl 15 0 NOTE SET_NOTE EN 1 8 0 10 -262144 -1 -1 0 1
+>>>>>>> origin/master
 ;
 #X floatatom 148 104 5 0 60 0 NOTE SET_NOTE_NUMBER NOTE_NUMBER;
 #X floatatom 182 104 5 0 0 1 uS SET_uS uS;
@@ -756,6 +829,7 @@ DIV 152 8 0 10 -262144 -1 -1 2;
 #X obj 447 101 cnv 15 240 75 empty empty empty 20 12 0 14 -191407 -66577
 0;
 #X obj 207 104 hradio 15 1 0 64 TAP_1 SET_TAP_1 TAP_1 965 7 0 10 -262144
+<<<<<<< HEAD
 -1 -1 11;
 #X obj 207 122 hradio 15 1 0 64 TAP_2 SET_TAP_2 TAP_2 965 7 0 10 -262144
 -1 -1 27;
@@ -763,6 +837,15 @@ DIV 152 8 0 10 -262144 -1 -1 2;
 -1 -1 5;
 #X obj 207 140 hradio 15 1 0 64 TAP_3 SET_TAP_3 TAP_3 965 7 0 10 -262144
 -1 -1 32;
+=======
+-1 -1 2;
+#X obj 207 122 hradio 15 1 0 64 TAP_2 SET_TAP_2 TAP_2 965 7 0 10 -262144
+-1 -1 3;
+#X obj 207 158 hradio 15 1 0 64 TAP_4 SET_TAP_4 TAP_4 965 7 0 10 -262144
+-1 -1 19;
+#X obj 207 140 hradio 15 1 0 64 TAP_3 SET_TAP_3 TAP_3 965 7 0 10 -262144
+-1 -1 20;
+>>>>>>> origin/master
 #X connect 1 0 0 0;
 #X connect 2 0 1 0;
 #X connect 2 1 1 1;
