@@ -37,10 +37,12 @@ long int MULTIPLIER = 16;
 byte BYTE_1 = 0;
 byte BYTE_2 = 0;
 
-int TAP_VALUES[4] = {15, 31, 0, 0}; //stores the tap position values 0-63, 0-31 = Left Register; 32-63 = Right Register;
-int TAP_EN[4] = {1, 2, 0, 0}; // uses 0 - 3 to designate which taps are enabled for each bit output to the left and right registers 0 or 0x00 = neither, 1 or 0x01 = Left, 2 or 0x10 = Right, 3 or 0x11 = bothvoltatile
+volatile byte YO = 0;
+
+int TAP_VALUES[4] = {0, 0, 0, 0}; //stores the tap position values 0-63, 0-31 = Left Register; 32-63 = Right Register;
+int TAP_EN[4] = {0, 0, 0, 0}; // uses 0 - 3 to designate which taps are enabled for each bit output to the left and right registers 0 or 0x00 = neither, 1 or 0x01 = Left, 2 or 0x10 = Right, 3 or 0x11 = bothvoltatile
 volatile boolean MOD_STATES[4] = {0, 0, 0, 0};
-int MOD_EN[4] = {1, 2, 0, 0}; // uses 0 - 3 to designate which mod inputs are enabled for each bit output to the left and right registers 0 or 0x00 = neither, 1 or 0x01 = Left, 2 or 0x10 = Right, 3 or 0x11 = both
+int MOD_EN[4] = {0, 0, 0, 0}; // uses 0 - 3 to designate which mod inputs are enabled for each bit output to the left and right registers 0 or 0x00 = neither, 1 or 0x01 = Left, 2 or 0x10 = Right, 3 or 0x11 = both
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -58,15 +60,15 @@ void setup() {
   for (int i = 0; i < REGISTER_SIZE; i++) {
     if (i == 0) {
       REG_STATES[i] = true;
-    } else {
+    } else { 
       REG_STATES[i] = false;
     }
   }
-  
-//  L_DIV_TWO = false;
-//  R_DIV_TWO = false;
-//  LAST_REG_L_IN = false;
-//  LAST_REG_R_IN = false;
+
+  //  L_DIV_TWO = false;
+  //  R_DIV_TWO = false;
+  //  LAST_REG_L_IN = false;
+  //  LAST_REG_R_IN = false;
 
   pinMode(REG_L_OUT, OUTPUT);
   pinMode(REG_R_OUT, OUTPUT);
@@ -145,9 +147,9 @@ void serial() {
       DISPLAY_REFRESH_RATE = BYTE_2;
     }
     else if (ADDRESS == 7) {
-      if((BYTE_1 & B00001000) >> 3 == 0){
+      if ((BYTE_1 & B00001000) >> 3 == 0) {
         MOD1_RATE = (BYTE_1 >> 4) | (BYTE_2 << 4);
-      } else if ((BYTE_1 & B00001000) >> 3 == 1){
+      } else if ((BYTE_1 & B00001000) >> 3 == 1) {
         MOD2_RATE = (BYTE_1 >> 4) | (BYTE_2 << 4);
       }
     }
@@ -200,18 +202,18 @@ void callback() {
   REG_STATES[0] = REG_L_IN;
   REG_STATES[16] = REG_R_IN; // 32 light version
   //  REG_STATES[32] = REG_R_IN; // 64 light version
-  
-//  if(REG_L_IN == 1 && LAST_REG_L_IN == 0) L_DIV_TWO = !L_DIV_TWO;
-//  if(REG_R_IN == 1 && LAST_REG_R_IN == 0) R_DIV_TWO = !R_DIV_TWO;
 
-  PORTD = (REG_L_IN << 2) | (REG_R_IN << 3) | REG_STATES[TAP_VALUES[0]] << 4 | REG_STATES[TAP_VALUES[1]] << 5 | REG_STATES[TAP_VALUES[2]] << 6 | REG_STATES[TAP_VALUES[3]] << 7;
+  //  if(REG_L_IN == 1 && LAST_REG_L_IN == 0) L_DIV_TWO = !L_DIV_TWO;
+  //  if(REG_R_IN == 1 && LAST_REG_R_IN == 0) R_DIV_TWO = !R_DIV_TWO;
+
+  PORTD = (REG_L_IN ^ REG_R_IN ^ REG_STATES[TAP_VALUES[0]]) << 2 | (REG_L_IN ^ REG_R_IN ^ REG_STATES[TAP_VALUES[1]]) << 3;
 
   if (count % DISPLAY_REFRESH_RATE == 0) {
     displayRegisters();
   }
-  
-//  LAST_REG_L_IN = REG_L_IN;
-//  LAST_REG_R_IN = REG_R_IN;
+
+  //  LAST_REG_L_IN = REG_L_IN;
+  //  LAST_REG_R_IN = REG_R_IN;
 
 
 
