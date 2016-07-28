@@ -10,24 +10,15 @@
 #define OUTPUT_REG_DATA 11
 #define OUTPUT_REG_CLK 10
 
-
-volatile unsigned long int count = 0;
 volatile unsigned long int REG1 = 1;
 volatile unsigned long int REG2 = 0;
 
+int MODE = 2;
+
 //boolean update = true;
 
-int DISPLAY_REFRESH_RATE = 1;
-volatile long int MOD1_RATE = 1;
-volatile long int MOD2_RATE = 1;
-long int FREQUENCY = 16666.67;
+long int FREQUENCY = 10000;
 long int MULTIPLIER = 8;
-
-
-int TAP_VALUES[4] = {0, 0, 0, 0}; //stores the tap position values 0-63, 0-31 = Left Register; 32-63 = Right Register;
-int TAP_EN[4] = {0, 0, 0, 0}; // uses 0 - 3 to designate which taps are enabled for each bit output to the left and right registers 0 or 0x00 = neither, 1 or 0x01 = Left, 2 or 0x10 = Right, 3 or 0x11 = bothvoltatile
-volatile boolean MOD_STATES[4] = {0, 0, 0, 0};
-int MOD_EN[4] = {0, 0, 0, 0}; // uses 0 - 3 to designate which mod inputs are enabled for each bit output to the left and right registers 0 or 0x00 = neither, 1 or 0x01 = Left, 2 or 0x10 = Right, 3 or 0x11 = both
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -53,21 +44,37 @@ void displayRegisters() {
 
   //load data into 4094 shift registers MSB to LSB
   for (int i = REGISTER_SIZE - 1 ; i >= 0 ; i--) {
-    PORTB = ((REG1 >> i & 1) ^ ((REG2 >> ((REGISTER_SIZE - 1) - i)) & 1)) << 3;
+    PORTB = ((REG1 >> i & 1) ^ ((REG2 >> ((REGISTER_SIZE - 1) - i)) & 1)) << 5;
     //pulse clock
-    PORTB |= B00000100;
+    PORTB |= B00010000;
     PORTB = B00000000;
   }
   //pulse strobe to update 4094 shift registers
-  PORTB = B00010000; //digitalWrite(OUTPUT_REG_STROBE, 1);
-  PORTB = B00000000; //digitalWrite(OUTPUT_REG_STROBE, 0);
+  PORTB = B01000000;
+  PORTB = B00000000;
 }
+
 void callback() {
-  REG1 = REG1 << 1;
-  REG2 = REG2 << 1;
-  
-  REG1 |= (REG2 >> 16 & 1) ^ (REG2 >> 13 & 1);
-  REG2 |= (REG1 >> 16 & 1) ^ (REG1 >> 11 & 1);
+  switch (MODE) {
+    case 0: // shift and circulate
+      REG1 = REG1 << 1;
+      REG2 = REG2 << 1;
+      REG1 |= REG2 >> 16 & 1;
+      REG2 |= REG1 >> 16 & 1;
+      break;
+    case 1: // shift and clear
+      REG1 = REG1 << 1;
+      REG2 = REG2 << 1;
+      break;
+    case 2: // random
+      REG1 = int(random(pow(2,16)));
+      REG2 = int(random(pow(2,16)));
+      break;
+    case 3: // count
+      REG1++;
+      REG2++;
+      break;
+  }
 
   displayRegisters();
 
