@@ -10,24 +10,21 @@
 #define OUTPUT_REG_DATA 11
 #define OUTPUT_REG_CLK 10
 
-
-volatile unsigned long int count = 0;
 volatile unsigned long int REG1 = 1;
 volatile unsigned long int REG2 = 0;
 
+int MODE = 7;
+unsigned long int RUNTIME = 0;
+
 //boolean update = true;
 
-int DISPLAY_REFRESH_RATE = 1;
-volatile long int MOD1_RATE = 1;
-volatile long int MOD2_RATE = 1;
-long int FREQUENCY = 16666.67;
+long int FREQUENCY = 10000;
 long int MULTIPLIER = 8;
+byte rules = 0;
+int bitDepth = 16;
 
-
-int TAP_VALUES[4] = {0, 0, 0, 0}; //stores the tap position values 0-63, 0-31 = Left Register; 32-63 = Right Register;
-int TAP_EN[4] = {0, 0, 0, 0}; // uses 0 - 3 to designate which taps are enabled for each bit output to the left and right registers 0 or 0x00 = neither, 1 or 0x01 = Left, 2 or 0x10 = Right, 3 or 0x11 = bothvoltatile
-volatile boolean MOD_STATES[4] = {0, 0, 0, 0};
-int MOD_EN[4] = {0, 0, 0, 0}; // uses 0 - 3 to designate which mod inputs are enabled for each bit output to the left and right registers 0 or 0x00 = neither, 1 or 0x01 = Left, 2 or 0x10 = Right, 3 or 0x11 = both
+int TIMEOUT = 5000;
+int iterations = 0;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,33 +39,83 @@ void setup() {
   pinMode(OUTPUT_REG_DATA, OUTPUT);
   pinMode(OUTPUT_REG_STROBE, OUTPUT);
 
+  randomizeRules();
+
+  Serial.begin(9600);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 void loop() {
-}
-
-void displayRegisters() {
-
-  //load data into 4094 shift registers MSB to LSB
-  for (int i = REGISTER_SIZE - 1 ; i >= 0 ; i--) {
-    PORTB = ((REG1 >> i & 1) ^ ((REG2 >> ((REGISTER_SIZE - 1) - i)) & 1)) << 3;
-    //pulse clock
-    PORTB |= B00000100;
-    PORTB = B00000000;
+  if (iterations >= 128) {
+    randomizeRules();
+    iterations = 0;
   }
-  //pulse strobe to update 4094 shift registers
-  PORTB = B00010000; //digitalWrite(OUTPUT_REG_STROBE, 1);
-  PORTB = B00000000; //digitalWrite(OUTPUT_REG_STROBE, 0);
+  if ( REG1 == 0 && REG2 == 0) {
+    REG1 = int(random(pow(2, 8)));
+    REG2 = int(random(pow(2, 8)));
+  }
 }
+
+void randomizeRules() {
+  rules = byte(int(random(pow(2, 8))));
+}
+
+int applyRules(int input) {
+  int result = 0;
+  for (int i = 0 ; i < bitDepth; i++) {
+    int state = 0;
+    for (int n = 0; n < 3; n++) {
+      int coord = ((i + bitDepth + (n - 1)) % bitDepth);
+      state |= (input >> coord & 1) << (2 - n);
+    }
+    result |= ((rules >> state) & 1) << i;
+  }
+  return result;
+}
+
 void callback() {
-  REG1 = REG1 << 1;
-  REG2 = REG2 << 1;
-  
-  REG1 |= (REG2 >> 16 & 1) ^ (REG2 >> 13 & 1);
-  REG2 |= (REG1 >> 16 & 1) ^ (REG1 >> 11 & 1);
+  switch (MODE) {
+    case 0: // shift and circulate
+      REG1 = REG1 << 1;
+      REG2 = REG2 << 1;
+      REG1 |= REG2 >> 16 & 1;
+      REG2 |= REG1 >> 16 & 1;
+      break;
+    case 1: // shift and clear
+      REG1 = REG1 << 1;
+      REG2 = REG2 << 1;
+      break;
+    case 2: // random
+      REG1 = int(random(pow(2, 16)));
+      REG2 = int(random(pow(2, 16)));
+      break;
+    case 3: // count
+      REG1++;
+      REG2++;
+      break;
+    case 4: // shift+recirculate REG1, clear REG2
+      REG1 << 1;
+      REG2 << 1;
+      REG1 |= REG1 >> 16 & 1;
+      break;
+    case 5: // shift+recirculate REG2, clear REG1
+      REG2 << 1;
+      REG1 << 1;
+      REG2 |= REG2 >> 16 & 1;
+      break;
+    case 6: // cellular automata
+      REG1 = applyRules(REG1);
+      REG2 = 0;
+      iterations++;
+      break;
+    case 7:
+      REG1 = REG1 << 1;
+      REG2 = REG2 << 1;
+      REG1 |= REG2 >> 16 & 1 ^ REG2 >> 14 & 1 ^ REG2 >> 13 & 1 ^ REG2 >> 11 & 1;
+      REG2 |= REG1 >> 16 & 1;
+      break;
+  }
 
   displayRegisters();
-
 }

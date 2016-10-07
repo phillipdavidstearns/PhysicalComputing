@@ -13,12 +13,18 @@
 volatile unsigned long int REG1 = 1;
 volatile unsigned long int REG2 = 0;
 
-int MODE = 2;
+int MODE = 7;
+unsigned long int RUNTIME = 0;
 
 //boolean update = true;
 
 long int FREQUENCY = 10000;
 long int MULTIPLIER = 8;
+byte rules = 0;
+int bitDepth = 16;
+
+int TIMEOUT = 5000;
+int iterations = 0;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -33,25 +39,39 @@ void setup() {
   pinMode(OUTPUT_REG_DATA, OUTPUT);
   pinMode(OUTPUT_REG_STROBE, OUTPUT);
 
+  randomizeRules();
+
+  Serial.begin(9600);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 void loop() {
+  if (iterations >= 128) {
+    randomizeRules();
+    iterations = 0;
+  }
+  if ( REG1 == 0 && REG2 == 0) {
+    REG1 = int(random(pow(2, 8)));
+    REG2 = int(random(pow(2, 8)));
+  }
 }
 
-void displayRegisters() {
+void randomizeRules() {
+  rules = byte(int(random(pow(2, 8))));
+}
 
-  //load data into 4094 shift registers MSB to LSB
-  for (int i = REGISTER_SIZE - 1 ; i >= 0 ; i--) {
-    PORTB = ((REG1 >> i & 1) ^ ((REG2 >> ((REGISTER_SIZE - 1) - i)) & 1)) << 5;
-    //pulse clock
-    PORTB |= B00010000;
-    PORTB = B00000000;
+int applyRules(int input) {
+  int result = 0;
+  for (int i = 0 ; i < bitDepth; i++) {
+    int state = 0;
+    for (int n = 0; n < 3; n++) {
+      int coord = ((i + bitDepth + (n - 1)) % bitDepth);
+      state |= (input >> coord & 1) << (2 - n);
+    }
+    result |= ((rules >> state) & 1) << i;
   }
-  //pulse strobe to update 4094 shift registers
-  PORTB = B01000000;
-  PORTB = B00000000;
+  return result;
 }
 
 void callback() {
@@ -67,15 +87,35 @@ void callback() {
       REG2 = REG2 << 1;
       break;
     case 2: // random
-      REG1 = int(random(pow(2,16)));
-      REG2 = int(random(pow(2,16)));
+      REG1 = int(random(pow(2, 16)));
+      REG2 = int(random(pow(2, 16)));
       break;
     case 3: // count
       REG1++;
       REG2++;
       break;
+    case 4: // shift+recirculate REG1, clear REG2
+      REG1 << 1;
+      REG2 << 1;
+      REG1 |= REG1 >> 16 & 1;
+      break;
+    case 5: // shift+recirculate REG2, clear REG1
+      REG2 << 1;
+      REG1 << 1;
+      REG2 |= REG2 >> 16 & 1;
+      break;
+    case 6: // cellular automata
+      REG1 = applyRules(REG1);
+      REG2 = 0;
+      iterations++;
+      break;
+    case 7:
+      REG1 = REG1 << 1;
+      REG2 = REG2 << 1;
+      REG1 |= REG1 |= REG2 >> 16 & 1 ^ REG2 >> 14 & 1 ^ REG2 >> 13 & 1 ^ REG2 >> 11 & 1;
+      REG2 |= REG1 >> 16 & 1;
+      break;
   }
 
   displayRegisters();
-
 }
