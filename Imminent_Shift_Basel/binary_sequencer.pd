@@ -1,0 +1,487 @@
+#N canvas 42 23 1265 663 10;
+#X obj 511 390 table \$0-sequence 32;
+#X obj 511 370 tabwrite \$0-sequence;
+#X obj 308 157 tgl 15 0 \$0-PATTERN_3 \$0-SET_PATTERN_3 4 4 8 0 10
+-262144 -1 -1 1 1;
+#X obj 278 157 tgl 15 0 \$0-PATTERN_1 \$0-SET_PATTERN_1 2 4 8 0 10
+-262144 -1 -1 1 1;
+#X obj 293 157 tgl 15 0 \$0-PATTERN_2 \$0-SET_PATTERN_2 3 4 8 0 10
+-191407 -1 -1 1 1;
+#X obj 263 157 tgl 15 0 \$0-PATTERN_0 \$0-SET_PATTERN_0 1 4 8 0 10
+-1 -262144 -262144 1 1;
+#X obj 323 157 tgl 15 0 \$0-PATTERN_4 \$0-SET_PATTERN_4 5 4 8 0 10
+-99865 -262144 -262144 1 1;
+#X obj 338 157 tgl 15 0 \$0-PATTERN_5 \$0-SET_PATTERN_5 6 4 8 0 10
+-262144 -1 -1 1 1;
+#X obj 353 157 tgl 15 0 \$0-PATTERN_6 \$0-SET_PATTERN_6 7 4 8 0 10
+-191407 -1 -1 1 1;
+#X obj 368 157 tgl 15 0 \$0-PATTERN_7 \$0-SET_PATTERN_7 8 4 8 0 10
+-262144 -1 -1 1 1;
+#X obj 428 157 tgl 15 0 \$0-PATTERN_11 \$0-SET_PATTERN_11 12 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 398 157 tgl 15 0 \$0-PATTERN_9 \$0-SET_PATTERN_9 10 1 8 0 10
+-262144 -1 -1 1 1;
+#X obj 413 157 tgl 15 0 \$0-PATTERN_10 \$0-SET_PATTERN_10 11 1 8 0
+10 -191407 -1 -1 1 1;
+#X obj 383 157 tgl 15 0 \$0-PATTERN_8 \$0-SET_PATTERN_8 9 4 8 0 10
+-1 -262144 -262144 1 1;
+#X obj 443 157 tgl 15 0 \$0-PATTERN_12 \$0-SET_PATTERN_12 13 1 8 0
+10 -99865 -262144 -262144 1 1;
+#X obj 458 157 tgl 15 0 \$0-PATTERN_13 \$0-SET_PATTERN_13 14 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 473 157 tgl 15 0 \$0-PATTERN_14 \$0-SET_PATTERN_14 15 1 8 0
+10 -191407 -1 -1 1 1;
+#X obj 488 157 tgl 15 0 \$0-PATTERN_15 \$0-SET_PATTERN_15 16 1 8 0
+10 -262144 -1 -1 1 1;
+#X msg 263 199 \$1 0;
+#X obj 511 345 unpack;
+#X msg 278 244 \$1 1;
+#X msg 293 199 \$1 2;
+#X msg 308 244 \$1 3;
+#X msg 323 199 \$1 4;
+#X msg 338 244 \$1 5;
+#X msg 353 199 \$1 6;
+#X msg 368 244 \$1 7;
+#X msg 383 199 \$1 8;
+#X msg 398 244 \$1 9;
+#X msg 413 199 \$1 10;
+#X msg 428 244 \$1 11;
+#X msg 443 199 \$1 12;
+#X msg 458 244 \$1 13;
+#X msg 473 199 \$1 14;
+#X msg 488 244 \$1 15;
+#X msg 503 199 \$1 16;
+#X msg 518 244 \$1 17;
+#X msg 533 199 \$1 18;
+#X msg 548 244 \$1 19;
+#X msg 563 199 \$1 20;
+#X msg 578 244 \$1 21;
+#X msg 593 199 \$1 22;
+#X msg 608 244 \$1 23;
+#X msg 623 199 \$1 24;
+#X msg 638 244 \$1 25;
+#X msg 653 199 \$1 26;
+#X msg 668 244 \$1 27;
+#X msg 683 199 \$1 28;
+#X msg 698 244 \$1 29;
+#X msg 713 199 \$1 30;
+#X msg 728 244 \$1 31;
+#X floatatom 229 156 5 0 0 0 - #0-AUTOMATION -;
+#X obj 263 139 hradio 15 1 0 32 \$0-POS \$0-SET_POS empty -20 7 0 10
+-262144 -1 -1 7;
+#X floatatom 128 138 5 0 22 0 DEST #0-SET_DESTINATION #0-DESTINATION
+;
+#X obj 121 103 tgl 15 0 \$0-EN \$0-SET_EN EN 1 7 0 10 -262144 -1 -1
+1 1;
+#X obj 121 121 hradio 15 1 0 8 \$0-DIV \$0-SET_DIV DIV -20 8 0 10 -262144
+-1 -1 3;
+#X obj 263 103 hradio 15 1 0 32 \$0-MIN \$0-SET_MIN MIN -20 7 0 10
+-262144 -1 -1 0;
+#X obj 263 121 hradio 15 1 0 32 \$0-MAX \$0-SET_MAX MAX -20 7 0 10
+-262144 -1 -1 31;
+#X floatatom 229 138 5 0 0 0 POS #0-SET_POS -;
+#X obj 196 103 hradio 15 1 0 3 \$0-DIRECTION \$0-SET_DIRECTION DIR
+-20 8 0 10 -262144 -1 -1 0;
+#X obj 790 113 \$0;
+#X obj 790 80 loadbang;
+#X symbolatom 103 156 20 0 0 0 - #0-ROUTE_SYMBOL -;
+#X obj 164 139 bng 15 50 10 0 \$0-DESTINATION_INC \$0-SET_DESTINATION_INC
++ 4 8 0 10 -262144 -1 -1;
+#X obj 182 139 bng 15 50 10 0 \$0-DESTINATION_DEC \$0-SET_DESTINATION_DEC
+- 4 8 0 10 -262144 -1 -1;
+#X msg 943 95 \; \$1-SET_PATTERN_0 0 \; \$1-SET_PATTERN_1 0 \; \$1-SET_PATTERN_2
+0 \; \$1-SET_PATTERN_3 0 \; \$1-SET_PATTERN_4 0 \; \$1-SET_PATTERN_5
+0 \; \$1-SET_PATTERN_6 0 \; \$1-SET_PATTERN_7 0 \; \$1-SET_PATTERN_8
+0 \; \$1-SET_PATTERN_9 0 \; \$1-SET_PATTERN_10 0 \; \$1-SET_PATTERN_11
+0 \; \$1-SET_PATTERN_12 0 \; \$1-SET_PATTERN_13 0 \; \$1-SET_PATTERN_14
+0 \; \$1-SET_PATTERN_15 0 \; \$1-SET_PATTERN_16 0 \; \$1-SET_PATTERN_17
+0 \; \$1-SET_PATTERN_18 0 \; \$1-SET_PATTERN_19 0 \; \$1-SET_PATTERN_20
+0 \; \$1-SET_PATTERN_21 0 \; \$1-SET_PATTERN_22 0 \; \$1-SET_PATTERN_23
+0 \; \$1-SET_PATTERN_24 0 \; \$1-SET_PATTERN_25 0 \; \$1-SET_PATTERN_26
+0 \; \$1-SET_PATTERN_27 0 \; \$1-SET_PATTERN_28 0 \; \$1-SET_PATTERN_29
+0 \; \$1-SET_PATTERN_30 0 \; \$1-SET_PATTERN_31 0;
+#N canvas 15 22 1309 670 ROUTING 0;
+#X obj 39 -94 route 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15;
+#X obj 435 -61 s SET_DISPLAY_INC_DEC;
+#X obj 39 77 s SET_NOTE;
+#X obj 723 352 s \$0-ROUTE_SYMBOL;
+#X msg 723 333 symbol NOTE;
+#X obj 723 -100 r \$0-DESTINATION;
+#X obj 723 -81 sel 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15;
+#X obj 977 -101 r \$0-DESTINATION;
+#X obj 977 -81 sel 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+;
+#X obj 753 274 s \$0-ROUTE_SYMBOL;
+#X msg 753 255 symbol MOD_1;
+#X obj 70 37 s SET_MOD_1;
+#X obj 86 17 s SET_MOD_1_EN_L;
+#X obj 102 -3 s SET_MOD_1_EN_R;
+#X obj 118 -24 s SET_MOD_2;
+#X obj 134 -44 s SET_MOD_2_EN_L;
+#X obj 150 -64 s SET_MOD_2_EN_R;
+#X obj 768 235 s \$0-ROUTE_SYMBOL;
+#X msg 768 216 symbol MOD_1_EN_L;
+#X obj 783 196 s \$0-ROUTE_SYMBOL;
+#X msg 783 177 symbol MOD_1_EN_R;
+#X obj 798 157 s \$0-ROUTE_SYMBOL;
+#X obj 814 118 s \$0-ROUTE_SYMBOL;
+#X obj 829 79 s \$0-ROUTE_SYMBOL;
+#X msg 798 138 symbol MOD_2;
+#X msg 814 99 symbol MOD_2_EN_L;
+#X msg 829 60 symbol MOD_2_EN_R;
+#X obj 246 -25 s SET_MOD_4_EN_R;
+#X obj 230 -5 s SET_MOD_4_EN_L;
+#X obj 214 15 s SET_MOD_4;
+#X obj 198 36 s SET_MOD_3_EN_R;
+#X obj 182 56 s SET_MOD_3_EN_L;
+#X obj 166 76 s SET_MOD_3;
+#X obj 844 39 s \$0-ROUTE_SYMBOL;
+#X obj 859 0 s \$0-ROUTE_SYMBOL;
+#X obj 874 -39 s \$0-ROUTE_SYMBOL;
+#X obj 891 350 s \$0-ROUTE_SYMBOL;
+#X obj 906 311 s \$0-ROUTE_SYMBOL;
+#X obj 921 272 s \$0-ROUTE_SYMBOL;
+#X msg 921 253 symbol MOD_4_EN_R;
+#X msg 906 292 symbol MOD_4_EN_L;
+#X msg 891 331 symbol MOD_4;
+#X msg 874 -58 symbol MOD_3_EN_R;
+#X msg 859 -19 symbol MOD_3_EN_L;
+#X msg 844 20 symbol MOD_3;
+#X obj 304 -94 route 16 17 18 19 20 21 22;
+#X obj 54 57 s SET_RAND_EN;
+#X obj 413 -40 s SET_TAP_4_EN_R;
+#X obj 391 -20 s SET_TAP_4_EN_L;
+#X obj 369 0 s SET_TAP_3_EN_R;
+#X obj 347 20 s SET_TAP_3_EN_L;
+#X obj 326 40 s SET_TAP_2_EN_R;
+#X obj 304 60 s SET_TAP_2_EN_L;
+#X obj 262 -48 s SET_TAP_1_EN_L;
+#X obj 278 -68 s SET_TAP_1_EN_R;
+#X obj 738 313 s \$0-ROUTE_SYMBOL;
+#X msg 738 294 symbol RAND_EN;
+#X obj 1052 -1 s \$0-ROUTE_SYMBOL;
+#X obj 1071 -40 s \$0-ROUTE_SYMBOL;
+#X msg 1071 -59 symbol TAP_4_EN_R;
+#X msg 1052 -20 symbol TAP_4_EN_L;
+#X obj 1090 182 s \$0-ROUTE_SYMBOL;
+#X msg 1090 163 symbol DISPLAY_INC_DEC;
+#X obj 1014 78 s \$0-ROUTE_SYMBOL;
+#X obj 1033 39 s \$0-ROUTE_SYMBOL;
+#X msg 1033 20 symbol TAP_3_EN_R;
+#X msg 1014 59 symbol TAP_3_EN_L;
+#X obj 977 155 s \$0-ROUTE_SYMBOL;
+#X obj 995 116 s \$0-ROUTE_SYMBOL;
+#X obj 935 233 s \$0-ROUTE_SYMBOL;
+#X obj 950 194 s \$0-ROUTE_SYMBOL;
+#X msg 995 97 symbol TAP_2_EN_R;
+#X msg 977 136 symbol TAP_2_EN_L;
+#X msg 950 175 symbol TAP_1_EN_R;
+#X msg 935 214 symbol TAP_1_EN_L;
+#X obj 570 -61 f;
+#X obj 570 -41 + 1;
+#X obj 595 -41 - 1;
+#X obj 595 -61 f;
+#X obj 585 -121 r \$0-DESTINATION;
+#X obj 570 -101 r \$0-DESTINATION_INC;
+#X obj 595 -81 r \$0-DESTINATION_DEC;
+#X obj 570 31 s \$0-SET_DESTINATION;
+#X obj 570 -18 max 0;
+#X obj 570 7 min 22;
+#X obj 304 -122 r \$0-ROUTING;
+#X connect 0 0 2 0;
+#X connect 0 1 46 0;
+#X connect 0 2 11 0;
+#X connect 0 3 12 0;
+#X connect 0 4 13 0;
+#X connect 0 5 14 0;
+#X connect 0 6 15 0;
+#X connect 0 7 16 0;
+#X connect 0 8 32 0;
+#X connect 0 9 31 0;
+#X connect 0 10 30 0;
+#X connect 0 11 29 0;
+#X connect 0 12 28 0;
+#X connect 0 13 27 0;
+#X connect 0 14 53 0;
+#X connect 0 15 54 0;
+#X connect 4 0 3 0;
+#X connect 5 0 6 0;
+#X connect 6 0 4 0;
+#X connect 6 1 56 0;
+#X connect 6 2 10 0;
+#X connect 6 3 18 0;
+#X connect 6 4 20 0;
+#X connect 6 5 24 0;
+#X connect 6 6 25 0;
+#X connect 6 7 26 0;
+#X connect 6 8 44 0;
+#X connect 6 9 43 0;
+#X connect 6 10 42 0;
+#X connect 6 11 41 0;
+#X connect 6 12 40 0;
+#X connect 6 13 39 0;
+#X connect 6 14 74 0;
+#X connect 6 15 73 0;
+#X connect 7 0 8 0;
+#X connect 8 0 72 0;
+#X connect 8 1 71 0;
+#X connect 8 2 66 0;
+#X connect 8 3 65 0;
+#X connect 8 4 60 0;
+#X connect 8 5 59 0;
+#X connect 8 6 62 0;
+#X connect 10 0 9 0;
+#X connect 18 0 17 0;
+#X connect 20 0 19 0;
+#X connect 24 0 21 0;
+#X connect 25 0 22 0;
+#X connect 26 0 23 0;
+#X connect 39 0 38 0;
+#X connect 40 0 37 0;
+#X connect 41 0 36 0;
+#X connect 42 0 35 0;
+#X connect 43 0 34 0;
+#X connect 44 0 33 0;
+#X connect 45 0 52 0;
+#X connect 45 1 51 0;
+#X connect 45 2 50 0;
+#X connect 45 3 49 0;
+#X connect 45 4 48 0;
+#X connect 45 5 47 0;
+#X connect 45 6 1 0;
+#X connect 56 0 55 0;
+#X connect 59 0 58 0;
+#X connect 60 0 57 0;
+#X connect 62 0 61 0;
+#X connect 65 0 64 0;
+#X connect 66 0 63 0;
+#X connect 71 0 68 0;
+#X connect 72 0 67 0;
+#X connect 73 0 70 0;
+#X connect 74 0 69 0;
+#X connect 75 0 76 0;
+#X connect 76 0 83 0;
+#X connect 77 0 83 0;
+#X connect 78 0 77 0;
+#X connect 79 0 75 1;
+#X connect 79 0 78 1;
+#X connect 80 0 75 0;
+#X connect 81 0 78 0;
+#X connect 83 0 84 0;
+#X connect 84 0 82 0;
+#X connect 85 0 0 0;
+#X connect 85 0 45 0;
+#X restore 511 409 pd ROUTING;
+#X msg 1081 95 \; \$1-SET_PATTERN_0 1 \; \$1-SET_PATTERN_1 1 \; \$1-SET_PATTERN_2
+1 \; \$1-SET_PATTERN_3 1 \; \$1-SET_PATTERN_4 1 \; \$1-SET_PATTERN_5
+1 \; \$1-SET_PATTERN_6 1 \; \$1-SET_PATTERN_7 1 \; \$1-SET_PATTERN_8
+1 \; \$1-SET_PATTERN_9 1 \; \$1-SET_PATTERN_10 1 \; \$1-SET_PATTERN_11
+1 \; \$1-SET_PATTERN_12 1 \; \$1-SET_PATTERN_13 1 \; \$1-SET_PATTERN_14
+1 \; \$1-SET_PATTERN_15 1 \; \$1-SET_PATTERN_16 1 \; \$1-SET_PATTERN_17
+1 \; \$1-SET_PATTERN_18 1 \; \$1-SET_PATTERN_19 1 \; \$1-SET_PATTERN_20
+1 \; \$1-SET_PATTERN_21 1 \; \$1-SET_PATTERN_22 1 \; \$1-SET_PATTERN_23
+1 \; \$1-SET_PATTERN_24 1 \; \$1-SET_PATTERN_25 1 \; \$1-SET_PATTERN_26
+1 \; \$1-SET_PATTERN_27 1 \; \$1-SET_PATTERN_28 1 \; \$1-SET_PATTERN_29
+1 \; \$1-SET_PATTERN_30 1 \; \$1-SET_PATTERN_31 1;
+#N canvas 75 84 920 464 COUNTER_CONTROLS 0;
+#X obj 170 192 i;
+#X obj 602 150 tabread \$0-sequence;
+#X obj 601 252 pack f f;
+#X obj 601 233 i;
+#X obj 616 214 r \$0-DESTINATION;
+#X obj 601 195 t b;
+#X obj 646 233 r \$0-AUTOMATION;
+#X obj 602 169 s \$0-AUTOMATION;
+#X obj 283 259 s \$0-INDEX;
+#X obj 602 131 r \$0-INDEX;
+#X obj 197 192 + 1;
+#X msg 204 211 0;
+#X obj 170 230 sel 1;
+#X obj 170 211 >= 0;
+#X obj 170 114 r MASTER_CLOCK;
+#X obj 170 152 spigot;
+#X obj 191 171 r \$0-DIV;
+#X obj 170 249 s \$0-LOCAL_CLOCK;
+#X obj 203 133 r \$0-EN;
+#X obj 275 79 r \$0-LOCAL_CLOCK;
+#X obj 291 240 s \$0-SET_POS;
+#X msg 291 217 set \$1;
+#X obj 282 100 r \$0-POS;
+#X msg 282 120 goto \$1;
+#X obj 438 151 r \$0-MIN;
+#X obj 512 134 r \$0-MAX;
+#X msg 512 153 max \$1;
+#X obj 290 193 counter 0 31;
+#X msg 423 189 min \$1;
+#X obj 423 170 i;
+#X obj 472 210 sel 1;
+#X msg 472 230 0;
+#X msg 499 229 1;
+#X obj 472 189 i 1;
+#X obj 472 170 t b;
+#X obj 396 151 spigot;
+#X obj 396 131 r \$0-LOCAL_CLOCK;
+#X obj 512 173 s \$0-counter;
+#X obj 423 250 s \$0-counter;
+#X obj 290 142 r \$0-counter;
+#X obj 307 166 r \$0-DIRECTION;
+#X obj 600 276 s \$0-ROUTING;
+#X connect 0 0 10 0;
+#X connect 0 0 13 0;
+#X connect 1 0 7 0;
+#X connect 2 0 41 0;
+#X connect 3 0 2 0;
+#X connect 4 0 3 1;
+#X connect 5 0 3 0;
+#X connect 6 0 5 0;
+#X connect 6 0 2 1;
+#X connect 9 0 1 0;
+#X connect 10 0 0 1;
+#X connect 11 0 0 1;
+#X connect 12 0 11 0;
+#X connect 12 0 17 0;
+#X connect 13 0 12 0;
+#X connect 14 0 15 0;
+#X connect 15 0 0 0;
+#X connect 16 0 13 1;
+#X connect 18 0 15 1;
+#X connect 19 0 27 0;
+#X connect 21 0 20 0;
+#X connect 22 0 23 0;
+#X connect 23 0 27 0;
+#X connect 24 0 29 1;
+#X connect 24 0 34 0;
+#X connect 25 0 26 0;
+#X connect 26 0 37 0;
+#X connect 27 0 8 0;
+#X connect 27 0 21 0;
+#X connect 28 0 38 0;
+#X connect 29 0 28 0;
+#X connect 30 0 31 0;
+#X connect 30 1 32 0;
+#X connect 31 0 33 1;
+#X connect 32 0 33 1;
+#X connect 33 0 30 0;
+#X connect 33 0 35 1;
+#X connect 34 0 33 0;
+#X connect 35 0 33 0;
+#X connect 35 0 29 0;
+#X connect 36 0 35 0;
+#X connect 39 0 27 0;
+#X connect 40 0 27 1;
+#X restore 511 429 pd COUNTER_CONTROLS;
+#X obj 1081 72 \$0;
+#X obj 1081 48 r \$0-ALL_PATTERN_1;
+#X obj 943 48 r \$0-ALL_PATTERN_0;
+#X obj 139 103 bng 15 250 50 0 \$0-ALL_PATTERN_0 empty 0 4 8 0 10 -262144
+-1 -1;
+#X obj 157 103 bng 15 250 50 0 \$0-ALL_PATTERN_1 empty 1 4 8 0 10 -262144
+-1 -1;
+#X obj 548 157 tgl 15 0 \$0-PATTERN_19 \$0-SET_PATTERN_19 20 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 518 157 tgl 15 0 \$0-PATTERN_17 \$0-SET_PATTERN_17 18 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 533 157 tgl 15 0 \$0-PATTERN_18 \$0-SET_PATTERN_18 19 1 8 0
+10 -191407 -1 -1 1 1;
+#X obj 503 157 tgl 15 0 \$0-PATTERN_16 \$0-SET_PATTERN_16 17 1 8 0
+10 -1 -262144 -262144 1 1;
+#X obj 563 157 tgl 15 0 \$0-PATTERN_20 \$0-SET_PATTERN_20 21 1 8 0
+10 -99865 -262144 -262144 1 1;
+#X obj 578 157 tgl 15 0 \$0-PATTERN_21 \$0-SET_PATTERN_21 22 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 593 157 tgl 15 0 \$0-PATTERN_22 \$0-SET_PATTERN_22 23 1 8 0
+10 -191407 -1 -1 1 1;
+#X obj 608 157 tgl 15 0 \$0-PATTERN_23 \$0-SET_PATTERN_23 24 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 668 157 tgl 15 0 \$0-PATTERN_27 \$0-SET_PATTERN_27 28 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 638 157 tgl 15 0 \$0-PATTERN_25 \$0-SET_PATTERN_25 26 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 653 157 tgl 15 0 \$0-PATTERN_26 \$0-SET_PATTERN_26 27 1 8 0
+10 -191407 -1 -1 1 1;
+#X obj 623 157 tgl 15 0 \$0-PATTERN_24 \$0-SET_PATTERN_24 25 1 8 0
+10 -1 -262144 -262144 1 1;
+#X obj 683 157 tgl 15 0 \$0-PATTERN_28 \$0-SET_PATTERN_28 29 1 8 0
+10 -99865 -262144 -262144 1 1;
+#X obj 698 157 tgl 15 0 \$0-PATTERN_29 \$0-SET_PATTERN_29 30 1 8 0
+10 -262144 -1 -1 1 1;
+#X obj 713 157 tgl 15 0 \$0-PATTERN_30 \$0-SET_PATTERN_30 31 1 8 0
+10 -191407 -1 -1 1 1;
+#X obj 728 157 tgl 15 0 \$0-PATTERN_31 \$0-SET_PATTERN_31 32 1 8 0
+10 -262144 -1 -1 1 1;
+#X msg 789 136 \; \$1-SET_MAX 31 \; \$1-SET_MIN 0 \; \$1-SET_DIV 3
+\; \$1-SET_DESTINATION 0;
+#X obj 943 72 \$0;
+#X connect 2 0 22 0;
+#X connect 3 0 20 0;
+#X connect 4 0 21 0;
+#X connect 5 0 18 0;
+#X connect 6 0 23 0;
+#X connect 7 0 24 0;
+#X connect 8 0 25 0;
+#X connect 9 0 26 0;
+#X connect 10 0 30 0;
+#X connect 11 0 28 0;
+#X connect 12 0 29 0;
+#X connect 13 0 27 0;
+#X connect 14 0 31 0;
+#X connect 15 0 32 0;
+#X connect 16 0 33 0;
+#X connect 17 0 34 0;
+#X connect 18 0 19 0;
+#X connect 19 0 1 0;
+#X connect 19 1 1 1;
+#X connect 20 0 19 0;
+#X connect 21 0 19 0;
+#X connect 22 0 19 0;
+#X connect 23 0 19 0;
+#X connect 24 0 19 0;
+#X connect 25 0 19 0;
+#X connect 26 0 19 0;
+#X connect 27 0 19 0;
+#X connect 28 0 19 0;
+#X connect 29 0 19 0;
+#X connect 30 0 19 0;
+#X connect 31 0 19 0;
+#X connect 32 0 19 0;
+#X connect 33 0 19 0;
+#X connect 34 0 19 0;
+#X connect 35 0 19 0;
+#X connect 36 0 19 0;
+#X connect 37 0 19 0;
+#X connect 38 0 19 0;
+#X connect 39 0 19 0;
+#X connect 40 0 19 0;
+#X connect 41 0 19 0;
+#X connect 42 0 19 0;
+#X connect 43 0 19 0;
+#X connect 44 0 19 0;
+#X connect 45 0 19 0;
+#X connect 46 0 19 0;
+#X connect 47 0 19 0;
+#X connect 48 0 19 0;
+#X connect 49 0 19 0;
+#X connect 50 0 19 0;
+#X connect 60 0 90 0;
+#X connect 61 0 60 0;
+#X connect 69 0 67 0;
+#X connect 70 0 69 0;
+#X connect 71 0 91 0;
+#X connect 74 0 38 0;
+#X connect 75 0 36 0;
+#X connect 76 0 37 0;
+#X connect 77 0 35 0;
+#X connect 78 0 39 0;
+#X connect 79 0 40 0;
+#X connect 80 0 41 0;
+#X connect 81 0 42 0;
+#X connect 82 0 46 0;
+#X connect 83 0 44 0;
+#X connect 84 0 45 0;
+#X connect 85 0 43 0;
+#X connect 86 0 47 0;
+#X connect 87 0 48 0;
+#X connect 88 0 49 0;
+#X connect 89 0 50 0;
+#X connect 91 0 65 0;
+#X coords 0 -1 1 1 645 75 2 100 100;
