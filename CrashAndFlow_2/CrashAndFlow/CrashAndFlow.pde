@@ -29,7 +29,6 @@ Light Control for Crash and Flow 2.0 by Krussia
 
 import processing.serial.*;
 Serial arduinoPort;
-
 int lightCount;
 int lightsMax = 32;
 ArrayList <Light> lights;
@@ -37,16 +36,18 @@ ArrayList<Ring> rings;
 ArrayList<Line> lines;
 boolean editMode;
 boolean allOn;
+boolean inverted;
+color bgcolor;
 /////////////////////////////////SETUP///////////////////////////////
 
 void setup() {
-  size(800, 600);
-  //fullScreen();
-  background(0);
+  //size(800, 600);
+  fullScreen();
   frameRate(30);
   lightCount=0;
   editMode=true; //0 = edit, 1 = perform
   allOn = false;
+  inverted = false;
   lights = new ArrayList<Light>();
   rings = new ArrayList<Ring>();
   lines = new ArrayList<Line>();
@@ -57,7 +58,18 @@ void setup() {
 /////////////////////////////////MAIN LOOP///////////////////////////////
 
 void draw() {
-  background(0);
+
+  if (editMode) {
+    bgcolor = 127;
+  } else if (inverted) {
+    bgcolor = 255;
+  } else {
+    bgcolor = 0;
+  }
+
+  background(bgcolor);
+  drawGrid();
+
   if (editMode) {
     updateLights();
     sendData(packLights());
@@ -70,6 +82,71 @@ void draw() {
 }
 
 /////////////////////////////////FUNCTIONS///////////////////////////////
+
+void drawGrid() {
+  int stageWidth =24; // in feet
+  int stageDepth=12; // in feet
+  int wallHeight=6; // in feet
+  int gridWidth; // in pixels
+  int gridHeight; // in pixels
+  int gridSize; // in pixels
+  int padding = 50; // in pixels
+  int heavy = 4;
+  int medium = 2;
+  int light = 1;
+
+  if (width/stageWidth < height/(stageDepth+wallHeight)) {
+    gridSize = (width-(2*padding))/stageWidth;
+  } else {
+    gridSize = (height-(2*padding))/(stageDepth+wallHeight);
+  }
+  gridWidth = gridSize*stageWidth;
+  gridHeight = gridSize*(stageDepth+wallHeight);
+  int gridXstart = (width - gridWidth)/2;
+  int gridYstart = (height - gridHeight)/2;
+  fill(255);
+
+  //text("grid size: "+gridSize, 50, 50);
+  //text("grid width: "+gridWidth, 50, 75);
+  //text("grid height: "+gridHeight, 50, 100);
+  //text("grid startX: "+gridXstart, 50, 125);
+  //text("grid startY: "+gridYstart, 50, 150);
+  //text("width: "+width, 50, 175);
+  //text("height: "+height, 50, 200);
+
+  if (editMode) {
+    fill(255);  
+    stroke(255);
+  } else {
+    fill(127);
+    stroke(127);
+  }
+  textAlign(CENTER, CENTER);
+  for (int x = 0; x <= stageWidth; x++) {
+
+    if (x==0 || x == stageWidth) {
+      strokeWeight(heavy);
+    } else if (x % 2 == 0) {
+      strokeWeight(medium);
+    } else {
+      strokeWeight(light);
+    }
+    if (x < stageWidth) text(x+1, gridXstart+(gridSize*x)+(gridSize/2), height-gridYstart+(gridSize/3));
+    line(gridXstart+(gridSize*x), gridYstart, gridXstart+(gridSize*x), height-gridYstart);
+  }
+  for (int y = 0; y <= wallHeight+stageDepth; y++) {
+
+    if (y==wallHeight || y==0 || y == wallHeight+stageDepth) {
+      strokeWeight(heavy);
+    } else if (y % 2 == 0) {
+      strokeWeight(medium);
+    } else {  
+      strokeWeight(light);
+    }
+    if (y < stageDepth+wallHeight) text(y+1, gridXstart-(gridSize/3), gridYstart+(gridSize*y)+(gridSize/2));
+    line(gridXstart, gridYstart+(gridSize*y), width-gridXstart, gridYstart+(gridSize*y));
+  }
+}
 
 void updateRings() {
   for (int i = rings.size() - 1; i >= 0; i--) {
@@ -101,19 +178,19 @@ void updateLights() {
 }
 
 long packLights() {
-  long output=0;
+  long packed=0;
   for (int i = lights.size()-1; i >=0; i--) {
     Light light = lights.get(i);
-    output|=int(light.isOn()) << i;
+    packed|=int(light.isOn()) << i;
   }
-  return output;
+  return packed;
 }
 
-void sendData(long output) {
+void sendData(long _output) {
   byte data = 0;
   arduinoPort.write(0xA0); // send sync byte, Arduino is looking for 0xA0
   for (int i = 0; i < 4; i++) {
-    data = byte((output >> (i*8)) & 0xFF);
+    data = byte((_output >> (i*8)) & 0xFF);
     arduinoPort.write(data);
   }
 }
@@ -185,16 +262,14 @@ void keyPressed() {
     }
     break;
   case 'c':
+    allOn=false;
     for (int i = lights.size() - 1; i >= 0; i--) {
       Light light = lights.get(i);
-      light.toggle=false;
+      light.toggle=allOn;
     }
     break;
   case 'i':
-    for (int i = lights.size() - 1; i >= 0; i--) {
-      Light light = lights.get(i);
-      light.invert=!light.invert;
-    }
+    inverted = !inverted;
     break;
   }
 
@@ -211,6 +286,13 @@ void keyPressed() {
     break;
   case RIGHT:
     lines.add(new Line(false, true));
+    break;
+  case 32:
+    allOn=!allOn;
+    for (int i = lights.size() - 1; i >= 0; i--) {
+      Light light = lights.get(i);
+      light.toggle=allOn;
+    }
     break;
   }
 
@@ -315,11 +397,10 @@ class Light {
   PVector pos;
   float r = 50;
   int id;
-  boolean selected = false, toggle = false, logic = false, random = false, invert = false;
+  boolean selected = false, toggle = false, logic = false, random = false;
 
   Light(PVector _pos, int _id) {
     pos = _pos;
-    r = 50;
     id = _id;
   }
 
@@ -328,19 +409,16 @@ class Light {
   }
 
   void update() {
-
     logic = false;
-
     ringLogic(rings);
     lineLogic(lines);
-    mouseLogic();
+    if (editMode) mouseLogic();
     if (random) randomLogic();
-
-
     display();
   }
 
   void display() {
+
     color txt, stroke, fill;
     if (!selected) {
       if (isOn()) {
@@ -364,11 +442,14 @@ class Light {
       }
     }
 
-    strokeWeight(1);
+    strokeWeight(2);
+
     stroke(stroke);
     fill(fill);
     ellipse(pos.x, pos.y, 2*r, 2*r);
+
     fill(txt);
+    textAlign(CENTER, CENTER);
     text(id+1, pos.x, pos.y);
   }
 
@@ -409,7 +490,7 @@ class Light {
   }
 
   boolean isOn() {
-    if (invert) {
+    if (inverted) {
       return !(logic || toggle);
     } else {
       return (logic || toggle);
@@ -482,7 +563,11 @@ class Ring {
 
   void update() {
     strokeWeight(2);
-    stroke(255);
+    if (!inverted) {
+      stroke(255);
+    } else {
+      stroke(0);
+    }
     noFill();
     ellipse(pos.x, pos.y, 2*r, 2*r);
     r+=rate;
@@ -519,7 +604,11 @@ class Line {
 
   void update() {
     strokeWeight(2);
-    stroke(255);
+    if (!inverted) {
+      stroke(255);
+    } else {
+      stroke(0);
+    }
     noFill();
 
     if (hv && dir || !hv && dir) {
