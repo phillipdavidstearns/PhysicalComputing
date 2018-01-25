@@ -87,7 +87,7 @@ void setup() {
   computeGrid();
   drawGrid();
 
-  editMode=true; //0 = edit, 1 = perform
+  editMode=false; //0 = edit, 1 = perform
   demoMode=false;
 
   lights = new ArrayList<Light>();
@@ -251,7 +251,7 @@ long packLights() {
   long packed=0;
   for (int i = lights.size()-1; i >=0; i--) {
     Light light = lights.get(i);
-    packed|=int(light.isOn()) << i;
+    packed |= int(light.isOn()) << i;
   }
   return packed;
 }
@@ -416,10 +416,10 @@ void keyPressed() {
     if (lfsrOn) lfsr.decRate();
     break;
   case ':':
-      lfsr.decTap2();
+    lfsr.decTap2();
     break;
   case '"':
-  lfsr.incTap2();
+    lfsr.incTap2();
     break;
 
   case '1': //KEYS
@@ -476,6 +476,27 @@ void keyPressed() {
       group[5]=!group[5];
     }
     break;
+
+
+  case '!': //KEYS
+    // toggle lights assigned to group
+    if (!editMode) group[0]=!group[0];
+    break;
+  case '@': //DRUMS
+    if (!editMode) group[1]=!group[1];
+    break;
+  case '#': //VOCALS
+    if (!editMode) group[2]=!group[2];
+    break;
+  case '$': //GUITAR
+    if (!editMode) group[3]=!group[3];
+    break;
+  case '%': //BASS
+    if (!editMode) group[4]=!group[4];
+    break;
+  case '^': //Between Songs
+    if (!editMode) group[5]=!group[5];  
+    break;
   }
 
   // FOR ADDING LINES 
@@ -495,7 +516,7 @@ void keyPressed() {
 
     // turning all lights on - to turn all on and off, press SPACE then 'c'  
   case 32:
-    allOn=!allOn;
+    allOn=true;
     break;
   }
 
@@ -533,6 +554,65 @@ void keyReleased() {
         group.selected = false;
       }
     }
+  } else if (keyCode == 32) {
+    allOn=false;
+  }
+
+  switch(key) {
+  case '1': //KEYS
+    if (editMode) { // displays which lights are assigned to group
+      for (Light light : lights) {
+        light.selected = false;
+      }
+    } else { // turns on lights assigned to group
+      group[0]=false;
+    }
+    break;
+  case '2': //DRUMS
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = false;
+      }
+    } else {
+      group[1]=false;
+    }
+    break;
+  case '3': //VOCALS
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = false;
+      }
+    } else {  
+      group[2]=false;
+    }
+    break;
+  case '4': //GUITAR
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = false;
+      }
+    } else {  
+      group[3]=false;
+    }
+    break;
+  case '5': //BASS
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = false;
+      }
+    } else {  
+      group[4]=false;
+    }
+    break;
+  case '6': //Between Songs
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = false;
+      }
+    } else {  
+      group[5]=false;
+    }
+    break;
   }
 } // keyReleased
 
@@ -709,6 +789,7 @@ class Light {
   }
 
   void update() {
+    logic = false;
     applyLogic(toggle);
     ringLogic();
     lineLogic();
@@ -719,7 +800,6 @@ class Light {
     if (caOn) applyLogic(ca.cellState(id));
     if (lfsrOn) applyLogic(lfsr.bit(id));
     display();
-    logic = false;
   }
 
   void groupLogic() {
@@ -778,7 +858,7 @@ class Light {
   }
 
   boolean isOn() {
-    return inverted^logic;
+    return inverted ^ logic;
   }
 
   boolean memberOf(int _group) {
@@ -913,7 +993,7 @@ class Line {
 
 //-------------CA CLASS-------------
 class CA {
-  int reg = 1;
+  int reg = 4;
   byte rules = 0;
   int bitDepth = lightsMax;
   int rate = 1;
@@ -964,7 +1044,7 @@ class CA {
 
 class LFSR {
   int reg;
-  int rate = 1;
+  int rate = 4;
   int tap1 = 16; 
   int tap2 = 15;
   boolean tap1en;
@@ -1005,7 +1085,7 @@ class LFSR {
   }
 
   void randomize() {
-    for(int i = 0 ; i < lightsMax ; i++){
+    for (int i = 0; i < lightsMax; i++) {
       reg |= int(random(2)) << i;
     }
   }
