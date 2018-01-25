@@ -29,21 +29,36 @@ Light Control for Crash and Flow 2.0 by Krussia
 
 import processing.serial.*;
 Serial arduinoPort;
-int lightCount;
-int groupCount;
-int lightsMax = 32;
-ArrayList <Light> lights;
-ArrayList <Group> groups;
-ArrayList <Ring> rings;
-ArrayList <Line> lines;
+
 boolean editMode;
+boolean demoMode;
+
+//variables associated with Light
+ArrayList <Light> lights;
+int lightCount;
+int lightsMax = 32;
 boolean allOn;
 boolean random;
+boolean caOn;
 boolean inverted;
-boolean[] group;
-color bgcolor;
+boolean lfsrOn;
+
+//variables associated with Group
+ArrayList <Group> groups;
+int groupCount;
+int groupsMax = 6;
+boolean[] group; //holds logic for toggling groups on and off
 String[] groupNames = {"KEYS", "DRUMS", "VOCALS", "GUITAR", "BASS"};
 
+ArrayList <Ring> rings;
+ArrayList <Line> lines;
+
+CA ca;
+LFSR lfsr;
+
+color bgcolor;
+
+//variables for calculating and drawing the grid
 float stageWidth =24; // in feet
 float stageDepth=12; // in feet
 float wallHeight=6; // in feet
@@ -62,29 +77,40 @@ float textX;
 float columnLabelY;
 float rowLabelX;
 
-
-
 /////////////////////////////////SETUP///////////////////////////////
 
 void setup() {
   //size(800, 600);
   fullScreen();
   frameRate(30);
+
   computeGrid();
   drawGrid();
-  lightCount=0;
-  groupCount=0;
-  group = new boolean[5];
+
   editMode=true; //0 = edit, 1 = perform
+  demoMode=false;
+
+  lights = new ArrayList<Light>();
+  lightCount=0;
   allOn = false;
   inverted = false;
   random = false;
-  lights = new ArrayList<Light>();
+  caOn = false;
+  lfsrOn = false;
+
   groups = new ArrayList<Group>();
+  groupCount=0;
+  group = new boolean[groupsMax];
+
   rings = new ArrayList<Ring>();
   lines = new ArrayList<Line>();
+
+  ca = new CA();
+  lfsr = new LFSR();
+
+  loadSettings();
   printArray(Serial.list()); // List all the available serial ports:
-  arduinoPort = new Serial(this, Serial.list()[2], 115200); // Open the port you are using at the rate you want:
+  arduinoPort = new Serial(this, Serial.list()[2], 115200); // Open the port you are using at the rate you want
 }
 
 /////////////////////////////////MAIN LOOP///////////////////////////////
@@ -100,11 +126,14 @@ void draw() {
   }
 
   background(bgcolor);
+
   drawGrid();
 
   if (!editMode) {
     updateRings();
     updateLines();
+    ca.update();
+    lfsr.update();
   }
   updateGroups();
   updateLights();
@@ -246,12 +275,19 @@ void saveSettings() {
   settings.addColumn("id");
   settings.addColumn("x");
   settings.addColumn("y");
+  for (int i = 0; i < group.length; i++) {
+    settings.addColumn("group"+(i+1));
+  }
+
 
   for (Light light : lights) {
     TableRow newRow = settings.addRow();
     newRow.setInt("id", light.id);
     newRow.setFloat("x", light.pos.x);
     newRow.setFloat("y", light.pos.y);
+    for (int i = 0; i < group.length; i++) {
+      newRow.setInt("group"+(i+1), int(light.memberOf(i)));
+    }
   }
   saveTable(settings, "lights.csv");
 
@@ -272,26 +308,36 @@ void saveSettings() {
 
 //load positions of lights into ArrayList
 void loadSettings() {
-
-  //initialize ArrayList
-  lights = new ArrayList<Light>();
-  lightCount=0;
-
   Table settings = loadTable("lights.csv", "header");
+  if (settings != null) {
+    //initialize ArrayList
+    lights = new ArrayList<Light>();
+    lightCount=0;
 
-  for (TableRow row : settings.rows()) {
-    lights.add(new Light(new PVector(row.getFloat("x"), row.getFloat("y")), row.getInt("id")));
-    lightCount++;
+    for (int i = 0; i < settings.getRowCount(); i++) {
+      TableRow row = settings.getRow(i);
+      lights.add(new Light(new PVector(row.getFloat("x"), row.getFloat("y")), row.getInt("id")));
+      for (int j = 0; j < group.length; j++) {
+        lights.get(i).member[j] = boolean(row.getInt("group"+(j+1)));
+      }
+      lightCount++;
+    }
+  } else {
+    println("Couldn't load light presets from file.");
   }
 
-  groups = new ArrayList<Group>();
-  groupCount=0;
+  if (settings != null) {
+    groups = new ArrayList<Group>();
+    groupCount=0;
 
-  settings = loadTable("groups.csv", "header");
+    settings = loadTable("groups.csv", "header");
 
-  for (TableRow row : settings.rows()) {
-    groups.add(new Group(new PVector(row.getFloat("x"), row.getFloat("y")), row.getString("name")));
-    groupCount++;
+    for (TableRow row : settings.rows()) {
+      groups.add(new Group(new PVector(row.getFloat("x"), row.getFloat("y")), row.getString("name")));
+      groupCount++;
+    }
+  } else {
+    println("Couldn't load group presets from file.");
   }
 }
 
@@ -315,29 +361,73 @@ void keyPressed() {
   case 'r': //ADD A RING
     rings.add(new Ring(mouseX, mouseY));
     break;
-  case 'z':
+  case 'z': // sparkle mode!
     random=!random;
     break;
-  case 'x':
+  case 'x': // turns on a random selection of lights
     for (Light light : lights) {
       light.toggle=!boolean(int(random(10)));
     }
     break;
-  case 'c':
+  case 'c': // turns off all lights!
     allOn=false;
     for (Light light : lights) {
       light.toggle=false;
     }
+    for (int i  = 0; i < group.length; i++) {
+      group[i]=false;
+    }
     break;
-  case 'i':
+  case 'i': // inverts the state of all lights
     inverted = !inverted;
     break;
+
+    //cellular automata interaction  
+  case 'a': // toggle cellular automata display
+    caOn = !caOn; 
+    break;
+  case 's':
+    if (caOn) ca.randomizeRules();
+    break;
+  case 'd':
+    if (caOn) ca.randomizeRegister();
+    break;
+  case ',': // slows down movement of CA animation
+    if (caOn) ca.incRate();
+    break;
+  case '.': // speeds up movement of CA animation
+    if (caOn) ca.decRate();
+    break;
+
+    //lfsr rules
+  case 'l':
+    lfsrOn = !lfsrOn;
+    break;
+  case 'k': //toggle recirculation vs linear feedback shift register mode
+    lfsr.mode = !lfsr.mode;
+    break;
+  case 'j':
+    lfsr.randomize();
+    break;
+  case ';': // slow it down
+    if (lfsrOn) lfsr.incRate();
+    break;
+  case '\'': // speed it up
+    if (lfsrOn) lfsr.decRate();
+    break;
+  case ':':
+      lfsr.decTap2();
+    break;
+  case '"':
+  lfsr.incTap2();
+    break;
+
   case '1': //KEYS
-    if (editMode) {
+    if (editMode) { // displays which lights are assigned to group
       for (Light light : lights) {
         light.selected = light.memberOf(0);
       }
-    } else { 
+    } else { // turns on lights assigned to group
       group[0]=!group[0];
     }
     break;
@@ -377,6 +467,15 @@ void keyPressed() {
       group[4]=!group[4];
     }
     break;
+  case '6': //Between Songs
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = light.memberOf(5);
+      }
+    } else {  
+      group[5]=!group[5];
+    }
+    break;
   }
 
   // FOR ADDING LINES 
@@ -393,6 +492,8 @@ void keyPressed() {
   case RIGHT:
     lines.add(new Line(false, true));
     break;
+
+    // turning all lights on - to turn all on and off, press SPACE then 'c'  
   case 32:
     allOn=!allOn;
     break;
@@ -421,7 +522,7 @@ void keyPressed() {
 void keyReleased() {
   PVector mouse = new PVector(mouseX, mouseY);
   //logic for selecting/deselecting Light objects
-  if (editMode && keyCode == SHIFT || key == '1' || key == '2' || key == '3' || key == '4' || key == '5') {
+  if (editMode && keyCode == SHIFT || key == '1' || key == '2' || key == '3' || key == '4' || key == '5' || key == '6') {
     for (Light light : lights) {
       if (light.isSelected() || light.inRadius(mouse)) {
         light.selected = false;
@@ -458,7 +559,7 @@ void mousePressed() {
         groups.add(new Group(mouse, groupNames[groupCount]));
         groupCount++;
       }
-    } else if (keyPressed && (key == '1' || key == '2' || key == '3' || key == '4' || key == '5')) {
+    } else if (keyPressed && (key == '1' || key == '2' || key == '3' || key == '4' || key == '5' || key == '6')) {
       int keyNumber=0;
       switch (key) {
       case '1':
@@ -475,6 +576,9 @@ void mousePressed() {
         break;
       case '5':
         keyNumber=5;
+        break;
+      case '6':
+        keyNumber=6;
         break;
       }
       for (Light light : lights) {
@@ -551,13 +655,13 @@ class Group {
     color txt, stroke, fill;
 
     if (!selected) {
-      stroke = color(255, 0, 0);
+      stroke = 127;
       fill = 0;
-      txt = color(255, 0, 0);
+      txt = 255;
     } else {
-      stroke = color(127, 0, 0);
-      fill = 0;
-      txt = color(127, 0, 0);
+      stroke = 127;
+      fill = 63;
+      txt = 127;
     }
 
 
@@ -593,7 +697,7 @@ class Light {
   float d = 2*r;
   int id;
   boolean selected = false, toggle = false, logic = false;
-  boolean[] member = new boolean[5];
+  boolean[] member = new boolean[group.length];
 
   Light(PVector _pos, int _id) {
     pos = _pos;
@@ -612,12 +716,14 @@ class Light {
     if (editMode) mouseLogic();
     if (random) randomLogic();
     if (allOn) applyLogic(true);
+    if (caOn) applyLogic(ca.cellState(id));
+    if (lfsrOn) applyLogic(lfsr.bit(id));
     display();
     logic = false;
   }
 
   void groupLogic() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < group.length; i++) {
       applyLogic(member[i] & group[i]);
     }
   }
@@ -802,5 +908,113 @@ class Line {
     } else {
       return true;
     }
+  }
+}
+
+//-------------CA CLASS-------------
+class CA {
+  int reg = 1;
+  byte rules = 0;
+  int bitDepth = lightsMax;
+  int rate = 1;
+
+  CA() {
+    randomizeRules();
+  }
+
+  void randomizeRules() {
+    rules = byte(int(random(pow(2, 8))));
+  }
+
+  void randomizeRegister() {
+    reg = int(random(pow(2, bitDepth)));
+  }
+
+  void update() { 
+    if (frameCount % rate == 0) reg = applyRules();
+  }
+
+  void incRate() {
+    if (rate < 10) rate++;
+  }
+  void decRate() {
+    if (rate > 1) rate--;
+  }
+
+
+  int applyRules() {
+    int result = 0;
+    for (int i = 0; i < bitDepth; i++) {
+      int state = 0;
+      for (int n = 0; n < 3; n++) {
+        int coord = ((i + bitDepth + (n-1)) % bitDepth);
+        state |= (reg >> coord & 1) << (2-n);
+      }  
+      result |= ((rules >> state) & 1) << i;
+    }
+    return result;
+  }
+
+  boolean cellState(int _cell) {
+    return boolean(reg >> _cell & 1);
+  }
+}
+
+//-------------LFSR CLASS-------------
+
+class LFSR {
+  int reg;
+  int rate = 1;
+  int tap1 = 16; 
+  int tap2 = 15;
+  boolean tap1en;
+  boolean tap2en;
+  boolean mode; // false = recirc only, true = lfsr
+
+  LFSR() {
+    reg = 1;
+  }
+
+  void update() {
+    if (frameCount % rate == 0) {
+
+      if (mode) {
+        tap1en = true;
+        tap2en = true;
+      } else {
+        tap1en = true;
+        tap2en = false;
+      }
+
+      reg = (reg << 1) | (int(tap1en) & (reg >> tap1 & 1)) ^ (int(tap2en) & (reg >> tap2 & 1));
+    }
+  }
+
+  void incRate() {
+    if (rate < 10) rate++;
+  }
+  void decRate() {
+    if (rate > 1) rate--;
+  }
+
+  void incTap2() {
+    if (tap2 < lightsMax-1) tap2++;
+  }
+  void decTap2() {
+    if (tap2 > 0) tap2--;
+  }
+
+  void randomize() {
+    for(int i = 0 ; i < lightsMax ; i++){
+      reg |= int(random(2)) << i;
+    }
+  }
+
+  void setMode(boolean _mode) {
+    mode=_mode;
+  }
+
+  boolean bit(int _bit) {
+    return boolean(reg >> _bit & 1);
   }
 }
