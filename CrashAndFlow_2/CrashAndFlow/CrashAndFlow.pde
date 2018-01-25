@@ -30,25 +30,57 @@ Light Control for Crash and Flow 2.0 by Krussia
 import processing.serial.*;
 Serial arduinoPort;
 int lightCount;
+int groupCount;
 int lightsMax = 32;
 ArrayList <Light> lights;
-ArrayList<Ring> rings;
-ArrayList<Line> lines;
+ArrayList <Group> groups;
+ArrayList <Ring> rings;
+ArrayList <Line> lines;
 boolean editMode;
 boolean allOn;
+boolean random;
 boolean inverted;
+boolean[] group;
 color bgcolor;
+String[] groupNames = {"KEYS", "DRUMS", "VOCALS", "GUITAR", "BASS"};
+
+float stageWidth =24; // in feet
+float stageDepth=12; // in feet
+float wallHeight=6; // in feet
+float gridWidth; // in pixels
+float gridHeight; // in pixels
+float gridSize; // in pixels
+float padding = 25; // in pixels
+int heavy = 4;
+int medium = 2;
+int light = 1;
+float gridXstart;
+float gridXend;
+float gridYstart;
+float gridYend;
+float textX;
+float columnLabelY;
+float rowLabelX;
+
+
+
 /////////////////////////////////SETUP///////////////////////////////
 
 void setup() {
   //size(800, 600);
   fullScreen();
   frameRate(30);
+  computeGrid();
+  drawGrid();
   lightCount=0;
+  groupCount=0;
+  group = new boolean[5];
   editMode=true; //0 = edit, 1 = perform
   allOn = false;
   inverted = false;
+  random = false;
   lights = new ArrayList<Light>();
+  groups = new ArrayList<Group>();
   rings = new ArrayList<Ring>();
   lines = new ArrayList<Line>();
   printArray(Serial.list()); // List all the available serial ports:
@@ -60,9 +92,9 @@ void setup() {
 void draw() {
 
   if (editMode) {
-    bgcolor = 127;
+    bgcolor = 63;
   } else if (inverted) {
-    bgcolor = 255;
+    bgcolor = 127;
   } else {
     bgcolor = 0;
   }
@@ -70,31 +102,18 @@ void draw() {
   background(bgcolor);
   drawGrid();
 
-  if (editMode) {
-    updateLights();
-    sendData(packLights());
-  } else {
+  if (!editMode) {
     updateRings();
     updateLines();
-    updateLights();
-    sendData(packLights());
   }
+  updateGroups();
+  updateLights();
+  sendData(packLights());
 }
 
 /////////////////////////////////FUNCTIONS///////////////////////////////
 
-void drawGrid() {
-  int stageWidth =24; // in feet
-  int stageDepth=12; // in feet
-  int wallHeight=6; // in feet
-  int gridWidth; // in pixels
-  int gridHeight; // in pixels
-  int gridSize; // in pixels
-  int padding = 50; // in pixels
-  int heavy = 4;
-  int medium = 2;
-  int light = 1;
-
+void computeGrid() {
   if (width/stageWidth < height/(stageDepth+wallHeight)) {
     gridSize = (width-(2*padding))/stageWidth;
   } else {
@@ -102,28 +121,33 @@ void drawGrid() {
   }
   gridWidth = gridSize*stageWidth;
   gridHeight = gridSize*(stageDepth+wallHeight);
-  int gridXstart = (width - gridWidth)/2;
-  int gridYstart = (height - gridHeight)/2;
-  fill(255);
+  gridXstart = (width - gridWidth)/2;
+  gridYstart = (height - gridHeight)/2;
+  columnLabelY=height-gridYstart+(gridSize/4);
+  rowLabelX=gridXstart-(gridSize/4);
+  gridYend = height-gridYstart;
+  gridXend = width-gridXstart;
+}
 
-  //text("grid size: "+gridSize, 50, 50);
-  //text("grid width: "+gridWidth, 50, 75);
-  //text("grid height: "+gridHeight, 50, 100);
-  //text("grid startX: "+gridXstart, 50, 125);
-  //text("grid startY: "+gridYstart, 50, 150);
-  //text("width: "+width, 50, 175);
-  //text("height: "+height, 50, 200);
+void drawGrid() {
 
+  //Grid colors
   if (editMode) {
     fill(255);  
     stroke(255);
+  } else if (inverted) {
+    fill(63);
+    stroke(63);
   } else {
     fill(127);
     stroke(127);
   }
-  textAlign(CENTER, CENTER);
-  for (int x = 0; x <= stageWidth; x++) {
 
+  textAlign(CENTER, CENTER);
+
+  //draw vertical lines
+  for (int x = 0; x <= stageWidth; x++) {
+    //set line weight
     if (x==0 || x == stageWidth) {
       strokeWeight(heavy);
     } else if (x % 2 == 0) {
@@ -131,11 +155,18 @@ void drawGrid() {
     } else {
       strokeWeight(light);
     }
-    if (x < stageWidth) text(x+1, gridXstart+(gridSize*x)+(gridSize/2), height-gridYstart+(gridSize/3));
-    line(gridXstart+(gridSize*x), gridYstart, gridXstart+(gridSize*x), height-gridYstart);
+    //label grid
+    float columnLabelX=gridXstart+(gridSize*x)+(gridSize/2);
+    if (x < stageWidth) text(x+1, columnLabelX, columnLabelY);
+    float boxX = gridXstart+(gridSize*x);
+    line(boxX, gridYstart, boxX, gridYend);
+    strokeWeight(0);
+    line(boxX, 0, boxX, height);
   }
-  for (int y = 0; y <= wallHeight+stageDepth; y++) {
 
+  //draw horizontal lines
+  for (int y = 0; y <= wallHeight+stageDepth; y++) {
+    //set line weight
     if (y==wallHeight || y==0 || y == wallHeight+stageDepth) {
       strokeWeight(heavy);
     } else if (y % 2 == 0) {
@@ -143,8 +174,13 @@ void drawGrid() {
     } else {  
       strokeWeight(light);
     }
-    if (y < stageDepth+wallHeight) text(y+1, gridXstart-(gridSize/3), gridYstart+(gridSize*y)+(gridSize/2));
-    line(gridXstart, gridYstart+(gridSize*y), width-gridXstart, gridYstart+(gridSize*y));
+    //label grid
+    float rowLabelY = gridYstart+(gridSize*y)+(gridSize/2);
+    if (y < stageDepth+wallHeight) text(y+1, rowLabelX, rowLabelY);
+    float boxY = gridYstart+(gridSize*y);
+    line(gridXstart, boxY, gridXend, boxY);
+    strokeWeight(0);
+    line(0, boxY, width, boxY);
   }
 }
 
@@ -171,9 +207,14 @@ void updateLines() {
 }
 
 void updateLights() {
-  for (int i = lights.size()-1; i >=0; i--) {
-    Light light = lights.get(i);
+  for (Light light : lights) {
     light.update();
+  }
+}
+
+void updateGroups() {
+  for (Group group : groups) {
+    group.update();
   }
 }
 
@@ -197,22 +238,36 @@ void sendData(long _output) {
 
 /////////////////////////////////SAVE & RECALL SETTINGS///////////////////////////////
 
-
 // output positions of lights to settings.csv
 void saveSettings() {
   Table settings = new Table();
+
+  //save lights
   settings.addColumn("id");
   settings.addColumn("x");
   settings.addColumn("y");
 
-  for (int i = 0; i < lights.size(); i++) {
-    Light light = lights.get(i);
+  for (Light light : lights) {
     TableRow newRow = settings.addRow();
     newRow.setInt("id", light.id);
     newRow.setFloat("x", light.pos.x);
     newRow.setFloat("y", light.pos.y);
   }
-  saveTable(settings, "settings.csv");
+  saveTable(settings, "lights.csv");
+
+  //save groups
+  settings = new Table();
+  settings.addColumn("name");
+  settings.addColumn("x");
+  settings.addColumn("y");
+
+  for (Group group : groups) {
+    TableRow newRow = settings.addRow();
+    newRow.setString("name", group.name);
+    newRow.setFloat("x", group.pos.x);
+    newRow.setFloat("y", group.pos.y);
+  }
+  saveTable(settings, "groups.csv");
 }
 
 //load positions of lights into ArrayList
@@ -222,13 +277,24 @@ void loadSettings() {
   lights = new ArrayList<Light>();
   lightCount=0;
 
-  Table settings = loadTable("settings.csv", "header");
+  Table settings = loadTable("lights.csv", "header");
 
   for (TableRow row : settings.rows()) {
     lights.add(new Light(new PVector(row.getFloat("x"), row.getFloat("y")), row.getInt("id")));
     lightCount++;
   }
+
+  groups = new ArrayList<Group>();
+  groupCount=0;
+
+  settings = loadTable("groups.csv", "header");
+
+  for (TableRow row : settings.rows()) {
+    groups.add(new Group(new PVector(row.getFloat("x"), row.getFloat("y")), row.getString("name")));
+    groupCount++;
+  }
 }
+
 /////////////////////////////////INTERACTION///////////////////////////////
 
 
@@ -250,26 +316,66 @@ void keyPressed() {
     rings.add(new Ring(mouseX, mouseY));
     break;
   case 'z':
-    for (int i = lights.size() - 1; i >= 0; i--) {
-      Light light = lights.get(i);
-      light.random=!light.random;
-    }
+    random=!random;
     break;
   case 'x':
-    for (int i = lights.size() - 1; i >= 0; i--) {
-      Light light = lights.get(i);
+    for (Light light : lights) {
       light.toggle=!boolean(int(random(10)));
     }
     break;
   case 'c':
     allOn=false;
-    for (int i = lights.size() - 1; i >= 0; i--) {
-      Light light = lights.get(i);
-      light.toggle=allOn;
+    for (Light light : lights) {
+      light.toggle=false;
     }
     break;
   case 'i':
     inverted = !inverted;
+    break;
+  case '1': //KEYS
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = light.memberOf(0);
+      }
+    } else { 
+      group[0]=!group[0];
+    }
+    break;
+  case '2': //DRUMS
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = light.memberOf(1);
+      }
+    } else {
+      group[1]=!group[1];
+    }
+    break;
+  case '3': //VOCALS
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = light.memberOf(2);
+      }
+    } else {  
+      group[2]=!group[2];
+    }
+    break;
+  case '4': //GUITAR
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = light.memberOf(3);
+      }
+    } else {  
+      group[3]=!group[3];
+    }
+    break;
+  case '5': //BASS
+    if (editMode) {
+      for (Light light : lights) {
+        light.selected = light.memberOf(4);
+      }
+    } else {  
+      group[4]=!group[4];
+    }
     break;
   }
 
@@ -289,14 +395,11 @@ void keyPressed() {
     break;
   case 32:
     allOn=!allOn;
-    for (int i = lights.size() - 1; i >= 0; i--) {
-      Light light = lights.get(i);
-      light.toggle=allOn;
-    }
     break;
   }
 
   if (editMode) {
+
     //Use DELETE or BACKSPACE key's to delete the last light added
     if (key == DELETE || key == BACKSPACE && lightCount > 0) {
       lights.remove(lightCount-1);
@@ -304,25 +407,29 @@ void keyPressed() {
     }
 
     //logic for selecting/deselecting Light objects
-    if (keyPressed && keyCode == SHIFT) {
-      for (int i = lights.size() - 1; i >= 0; i--) {
-        Light light = lights.get(i);
-        if (light.inRadius(mouseX, mouseY)) {
-          light.selected = true;
-        }
+    if (keyCode == SHIFT) {
+      for (Light light : lights) {
+        light.selected = light.inRadius(mouseX, mouseY);
+      }
+      for (Group group : groups) {
+        group.selected = group.inRadius(mouseX, mouseY);
       }
     }
   }
 } // keyPressed
 
 void keyReleased() {
-
+  PVector mouse = new PVector(mouseX, mouseY);
   //logic for selecting/deselecting Light objects
-  if (keyCode == SHIFT) {
-    for (int i = lights.size() - 1; i >= 0; i--) {
-      Light light = lights.get(i);
-      if (light.isSelected()) {
+  if (editMode && keyCode == SHIFT || key == '1' || key == '2' || key == '3' || key == '4' || key == '5') {
+    for (Light light : lights) {
+      if (light.isSelected() || light.inRadius(mouse)) {
         light.selected = false;
+      }
+    }
+    for (Group group : groups) {
+      if (group.isSelected() || group.inRadius(mouse)) {
+        group.selected = false;
       }
     }
   }
@@ -333,29 +440,56 @@ void mousePressed() {
   PVector mouse = new PVector(mouseX, mouseY);
 
   if (editMode) { // logic for edit mode interaction with Light objects
-    // logic for adding Light objects
-    if (keyPressed && keyCode == ALT) {
+    if (keyPressed && keyCode == ALT) { // logic for adding a Light 
       boolean lightClicked = false;
-      for (int i = lights.size() - 1; i >= 0; i--) {
-        Light light = lights.get(i);
-        if (light.inRadius(mouse)) {
-          lightClicked |= true;
-        }
+      for (Light light : lights) {
+        lightClicked |= light.inRadius(mouse);
       } 
-      if (!lightClicked) { // don't add a new Light object on top of an old one
-        if (lightCount<32) {
-          lights.add(new Light(mouse, lightCount));
-          lightCount++;
+      if (!lightClicked && lightCount<32) { // don't add a new Light on top of an old one 
+        lights.add(new Light(mouse, lightCount));
+        lightCount++;
+      }
+    } else if (keyPressed && keyCode == CONTROL) { //logic for adding a Group
+      boolean clicked = false;
+      for (Group group : groups) {
+        clicked |= group.inRadius(mouse);
+      } 
+      if (!clicked && groupCount<5) { // don't add a new Group on top of an old one 
+        groups.add(new Group(mouse, groupNames[groupCount]));
+        groupCount++;
+      }
+    } else if (keyPressed && (key == '1' || key == '2' || key == '3' || key == '4' || key == '5')) {
+      int keyNumber=0;
+      switch (key) {
+      case '1':
+        keyNumber=1;
+        break;
+      case '2':
+        keyNumber=2;
+        break;
+      case '3':
+        keyNumber=3;
+        break;
+      case '4':
+        keyNumber=4;
+        break;
+      case '5':
+        keyNumber=5;
+        break;
+      }
+      for (Light light : lights) {
+        if (light.inRadius(mouse)) {
+          light.member[keyNumber-1] = !light.member[keyNumber-1];
+          light.selected = light.member[keyNumber-1];
         }
       }
-    } else if (!(keyPressed && keyCode == SHIFT)) { // logic for toggling Light objects on and off
-      for (int i = lights.size() - 1; i >= 0; i--) {
-        Light light = lights.get(i);
-        if (light.inRadius(mouse)) {
-          light.toggle = !light.toggle;
-        }
+    } else if (!keyPressed) { // logic for toggling Light objects on and off
+      for (Light light : lights) {
+        if (light.inRadius(mouse)) light.toggle = !light.toggle;
       }
     }
+  } else {
+    rings.add(new Ring(mouse));
   }
 } // mousePressed
 
@@ -363,13 +497,11 @@ void mouseMoved() {
 
   //logic for selecting/deselecting Light objects
   if (editMode && keyPressed && keyCode == SHIFT) {
-    for (int i = lights.size() - 1; i >= 0; i--) {
-      Light light = lights.get(i);
-      if (light.inRadius(mouseX, mouseY)) {
-        light.selected = true;
-      } else if (light.isSelected()) {
-        light.selected = false;
-      }
+    for (Light light : lights) {
+      light.selected = light.inRadius(mouseX, mouseY);
+    }
+    for (Group group : groups) {
+      group.selected = group.inRadius(mouseX, mouseY);
     }
   }
 } // mouseMoved
@@ -378,11 +510,16 @@ void mouseDragged() {
 
   //logic for moving Light objects that have been selected
   if (editMode) {
-    for (int i = lights.size() - 1; i >= 0; i--) {
-      Light light = lights.get(i);
+    for (Light light : lights) {
       if (light.isSelected()) {
         light.pos.x+=mouseX-pmouseX;
         light.pos.y+=mouseY-pmouseY;
+      }
+    }
+    for (Group group : groups) {
+      if (group.isSelected()) {
+        group.pos.x+=mouseX-pmouseX;
+        group.pos.y+=mouseY-pmouseY;
       }
     }
   }
@@ -391,13 +528,72 @@ void mouseDragged() {
 
 /////////////////////////////////CLASSES///////////////////////////////
 
+//-------------GROUP CLASS-------------
+
+class Group {
+  PVector pos;
+  float r = 80;
+  float d = 2*r;
+  String name;
+  boolean selected = false;
+
+  Group(PVector _pos, String _name) {
+    pos = _pos;
+    name = _name;
+  }
+
+  void update() {
+    display();
+  }
+
+  void display() {
+
+    color txt, stroke, fill;
+
+    if (!selected) {
+      stroke = color(255, 0, 0);
+      fill = 0;
+      txt = color(255, 0, 0);
+    } else {
+      stroke = color(127, 0, 0);
+      fill = 0;
+      txt = color(127, 0, 0);
+    }
+
+
+    strokeWeight(2);
+
+    stroke(stroke);
+    fill(fill);
+    ellipse(pos.x, pos.y, d, d);
+
+    fill(txt);
+    textAlign(CENTER, CENTER);
+    text(name, pos.x, pos.y);
+  }
+
+  boolean isSelected() {
+    return selected;
+  }
+
+  boolean inRadius(PVector _pos) {
+    return (PVector.dist(_pos, pos) < r);
+  }
+
+  boolean inRadius(float _x, float _y) {
+    return (PVector.dist(new PVector(_x, _y), pos) < r);
+  }
+}
+
 //-------------LIGHT CLASS-------------
 
 class Light {
   PVector pos;
   float r = 50;
+  float d = 2*r;
   int id;
-  boolean selected = false, toggle = false, logic = false, random = false;
+  boolean selected = false, toggle = false, logic = false;
+  boolean[] member = new boolean[5];
 
   Light(PVector _pos, int _id) {
     pos = _pos;
@@ -409,17 +605,27 @@ class Light {
   }
 
   void update() {
-    logic = false;
-    ringLogic(rings);
-    lineLogic(lines);
+    applyLogic(toggle);
+    ringLogic();
+    lineLogic();
+    groupLogic();
     if (editMode) mouseLogic();
     if (random) randomLogic();
+    if (allOn) applyLogic(true);
     display();
+    logic = false;
+  }
+
+  void groupLogic() {
+    for (int i = 0; i < 5; i++) {
+      applyLogic(member[i] & group[i]);
+    }
   }
 
   void display() {
 
     color txt, stroke, fill;
+
     if (!selected) {
       if (isOn()) {
         stroke = 0;
@@ -446,7 +652,7 @@ class Light {
 
     stroke(stroke);
     fill(fill);
-    ellipse(pos.x, pos.y, 2*r, 2*r);
+    ellipse(pos.x, pos.y, d, d);
 
     fill(txt);
     textAlign(CENTER, CENTER);
@@ -454,35 +660,11 @@ class Light {
   }
 
   boolean inRadius(PVector _pos) {
-    if (PVector.dist(_pos, pos) < r) {
-      return true;
-    } else {
-      return false;
-    }
+    return (PVector.dist(_pos, pos) < r);
   }
 
   boolean inRadius(float _x, float _y) {
-    if (PVector.dist(new PVector(_x, _y), pos) < r) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  boolean intersectX(float _x) {
-    if (PVector.dist(new PVector(_x, pos.y), pos) < r) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  boolean intersectY(float _y) {
-    if (PVector.dist(new PVector(pos.x, _y), pos) < r) {
-      return true;
-    } else {
-      return false;
-    }
+    return (PVector.dist(new PVector(_x, _y), pos) < r);
   }
 
   boolean isSelected() {
@@ -490,54 +672,33 @@ class Light {
   }
 
   boolean isOn() {
-    if (inverted) {
-      return !(logic || toggle);
-    } else {
-      return (logic || toggle);
+    return inverted^logic;
+  }
+
+  boolean memberOf(int _group) {
+    return member[_group];
+  }
+
+
+  void ringLogic() {
+    for (Ring ring : rings) {
+      float dist = PVector.dist(ring.pos, pos);
+      applyLogic((dist - ring.r) < r && ring.r < (dist + r));
     }
   }
 
-  boolean ringIntersect(Ring _ring) {
-    float dist = PVector.dist(_ring.pos, pos);
-    return (dist - _ring.r) < r && _ring.r < (dist + r);
-  }
-
-  void ringLogic(ArrayList<Ring> _rings) {
-    for (int j = _rings.size() - 1; j >= 0; j--) {
-      Ring ring = _rings.get(j);
-      if (ringIntersect(ring)) {
-        applyLogic(true);
-      } else {
-        applyLogic(false);
-      }
-    }
-  }
-
-  void lineLogic(ArrayList<Line> _lines) {
-    for (int j = _lines.size() - 1; j >= 0; j--) {
-      Line line = _lines.get(j);
+  void lineLogic() {
+    for (Line line : lines) {
       if (line.hv) {
-        if (intersectY(line.pos.y)) {
-          applyLogic(true);
-        } else {
-          applyLogic(false);
-        }
+        applyLogic(PVector.dist(new PVector(pos.x, line.pos.y), pos) < r);
       } else {
-        if (intersectX(line.pos.x)) {
-          applyLogic(true);
-        } else {
-          applyLogic(false);
-        }
+        applyLogic(PVector.dist(new PVector(line.pos.x, pos.y), pos) < r);
       }
     }
   }
 
   void mouseLogic() {
-    if (inRadius(mouseX, mouseY)) {
-      applyLogic(true);
-    } else {
-      applyLogic(false);
-    }
+    applyLogic(inRadius(mouseX, mouseY));
   }
 
   void randomLogic() {

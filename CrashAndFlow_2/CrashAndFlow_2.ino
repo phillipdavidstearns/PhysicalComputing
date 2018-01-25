@@ -50,7 +50,7 @@ void callback() {
 }
 
 void serial() {
-  if (Serial.available() >= 5) {
+  if (Serial.available() >= 5) { // start reading when the buffer has enough data
     if (Serial.read() == 0xA0) { // 0xA0 is an arbitrary sync bit being transmitted by the processing patch before every transmission 
       for (int i = 0 ; i < 4; i++) {
         lights[i] = Serial.read();
@@ -60,11 +60,20 @@ void serial() {
 }
 
 void updateRegisters() {
+
+  // B00000000
+  //     ^^^
+  //     |||
+  //pin12 || connected to the clock pin of the 4094 array
+  // pin11 | connected to the data pin of the 4094 array
+  //  pin10  connected to the strobe pin of the 4094 array
+  
   //load data into 4094 shift registers MSB to LSB
-  for (int i = 3 ; i >= 0 ; i--) { 
-   for(int j = 7 ; j >= 0 ; j--){
+  for (int i = 3 ; i >= 0 ; i--) { //run through the bytes
+   for(int j = 7 ; j >= 0 ; j--){ //run through each bit
+    //change the state of the data pin
     PORTB = ((lights[i] >> j) & 1) << 3;
-    //pulse clock
+    //pulse clock pin
     PORTB |= B00010000;
     PORTB = B00000000;
    }
