@@ -387,16 +387,19 @@ void keyPressed() {
     caOn = !caOn; 
     break;
   case 's':
-    if (caOn) ca.randomizeRules();
+    ca.randomizeRules();
     break;
   case 'd':
-    if (caOn) ca.randomizeRegister();
+    ca.randomizeRegister();
+    break;
+  case 'f':
+    ca.reg=1;
     break;
   case ',': // slows down movement of CA animation
-    if (caOn) ca.incRate();
+    ca.incRate();
     break;
   case '.': // speeds up movement of CA animation
-    if (caOn) ca.decRate();
+    ca.decRate();
     break;
 
     //lfsr rules
@@ -409,11 +412,14 @@ void keyPressed() {
   case 'j':
     lfsr.randomize();
     break;
+  case 'J':
+    lfsr.reg = 1;
+    break;
   case ';': // slow it down
-    if (lfsrOn) lfsr.incRate();
+    lfsr.incRate();
     break;
   case '\'': // speed it up
-    if (lfsrOn) lfsr.decRate();
+    lfsr.decRate();
     break;
   case ':':
     lfsr.decTap2();
@@ -421,82 +427,66 @@ void keyPressed() {
   case '"':
     lfsr.incTap2();
     break;
+  }
 
-  case '1': //KEYS
-    if (editMode) { // displays which lights are assigned to group
-      for (Light light : lights) {
-        light.selected = light.memberOf(0);
-      }
-    } else { // turns on lights assigned to group
-      group[0]=!group[0];
+  if (key == '1' || key == '2' || key == '3' || key == '4' || key == '5' || key == '6') {
+    int keyNumber=0;
+    switch (key) {
+    case '1':
+      keyNumber=1;
+      break;
+    case '2':
+      keyNumber=2;
+      break;
+    case '3':
+      keyNumber=3;
+      break;
+    case '4':
+      keyNumber=4;
+      break;
+    case '5':
+      keyNumber=5;
+      break;
+    case '6':
+      keyNumber=6;
+      break;
     }
-    break;
-  case '2': //DRUMS
     if (editMode) {
       for (Light light : lights) {
-        light.selected = light.memberOf(1);
+        light.selected = light.memberOf(keyNumber-1);
       }
     } else {
-      group[1]=!group[1];
+      group[keyNumber-1]=!group[keyNumber-1];
     }
-    break;
-  case '3': //VOCALS
+  } else if (key == '!' || key == '@' || key == '#' || key == '$' || key == '%' || key == '^') {
+    int keyNumber=0;
+    switch (key) {
+    case '!':
+      keyNumber=1;
+      break;
+    case '@':
+      keyNumber=2;
+      break;
+    case '#':
+      keyNumber=3;
+      break;
+    case '$':
+      keyNumber=4;
+      break;
+    case '%':
+      keyNumber=5;
+      break;
+    case '^':
+      keyNumber=6;
+      break;
+    }
     if (editMode) {
       for (Light light : lights) {
-        light.selected = light.memberOf(2);
+        light.member[keyNumber-1] = false;
       }
-    } else {  
-      group[2]=!group[2];
+    } else {
+      group[keyNumber-1]=!group[keyNumber-1];
     }
-    break;
-  case '4': //GUITAR
-    if (editMode) {
-      for (Light light : lights) {
-        light.selected = light.memberOf(3);
-      }
-    } else {  
-      group[3]=!group[3];
-    }
-    break;
-  case '5': //BASS
-    if (editMode) {
-      for (Light light : lights) {
-        light.selected = light.memberOf(4);
-      }
-    } else {  
-      group[4]=!group[4];
-    }
-    break;
-  case '6': //Between Songs
-    if (editMode) {
-      for (Light light : lights) {
-        light.selected = light.memberOf(5);
-      }
-    } else {  
-      group[5]=!group[5];
-    }
-    break;
-
-
-  case '!': //KEYS
-    // toggle lights assigned to group
-    if (!editMode) group[0]=!group[0];
-    break;
-  case '@': //DRUMS
-    if (!editMode) group[1]=!group[1];
-    break;
-  case '#': //VOCALS
-    if (!editMode) group[2]=!group[2];
-    break;
-  case '$': //GUITAR
-    if (!editMode) group[3]=!group[3];
-    break;
-  case '%': //BASS
-    if (!editMode) group[4]=!group[4];
-    break;
-  case '^': //Between Songs
-    if (!editMode) group[5]=!group[5];  
-    break;
   }
 
   // FOR ADDING LINES 
@@ -898,7 +888,7 @@ class Light {
 class Ring {
   PVector pos;
   float r = 0;
-  float rate = 15;
+  float rate = 25;
 
   Ring(float _x, float _y) {
     pos = new PVector(_x, _y);
@@ -929,7 +919,7 @@ class Ring {
 
 class Line {
   PVector pos = new PVector(0, 0);
-  float rate = 20;
+  float rate = 25;
   boolean hv;  // horizontal or vertical orientation, true = horizontal, false = vertical
   boolean dir; // direction of movement, true left to right / top to bottom, false right to left / bottom to top
 
@@ -993,10 +983,10 @@ class Line {
 
 //-------------CA CLASS-------------
 class CA {
-  int reg = 4;
+  int reg = 1;
   byte rules = 0;
   int bitDepth = lightsMax;
-  int rate = 1;
+  int rate = 4;
 
   CA() {
     randomizeRules();
