@@ -7,6 +7,7 @@
 #define OUT1 8
 #define OUT2 9
 #define OUT3 10
+#define INTERRUPT 2
 
 byte addr;
 byte val;
@@ -35,6 +36,7 @@ volatile unsigned long clock = 0;
 //////////////////////////////////////////////////////////////////////////////
 
 void setup() {
+  pinMode(INTERRUPT, INPUT);
   pinMode(OUT1, OUTPUT);
   pinMode(OUT2, OUTPUT);
   pinMode(OUT3, OUTPUT);
@@ -90,6 +92,9 @@ ISR (TIMER1_OVF_vect) {
 }
 
 void pinISR(){
-  
+  r1t1 = random(32);
+  r1t2 = random(32);
+  r2t1 = random(32);
+  r2t2 = random(32);
 }
 
