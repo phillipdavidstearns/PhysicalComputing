@@ -51,14 +51,6 @@
 const int hSyncPin = 3;     // <------- HSYNC
 const int vSyncPin = 10;    // <------- VSYNC
 
-volatile long count;
-volatile long reg1, reg2, reg3;
-byte mod1, mod2, mod3;
-volatile byte r1t1, r1t2, r2t1, r2t2, r3t1, r3t2, div1, div2, div3;
-byte portDOut;
-volatile byte addr, value;
-// Timer 1 - Vertical sync
-
 // output    OC1B   pin 16  (D10) <------- VSYNC
 
 //   Period: 16.67 mS (60 Hz)
@@ -88,33 +80,6 @@ volatile byte addr, value;
 
 void setup()
 {
-  reg1 = 1;
-  reg2 = 1;
-  reg3 = 1;
-
-  mod1 = 7;
-  mod2 = 9;
-  mod3 = 9;
-
-  r1t1 = 5;
-  r1t2 = 0;
-  r2t1 = 6;
-  r2t2 = 0;
-  r3t1 = 7;
-  r3t2 = 0;
-
-  div1 = 7;
-  div2 = 5;
-  div3 = 6;
-
-  portDOut = 0;
-
-  pinMode (5, OUTPUT);
-  pinMode (6, OUTPUT);
-  pinMode (7, OUTPUT);
-
-  addr = 0;
-  value = 0;
 
   // disable Timer 0
   TIMSK0 = 0;  // no interrupts on Timer 0
@@ -144,75 +109,15 @@ void setup()
 }  // end of setup
 
 // ISR: Vsync pulse
-ISR (TIMER1_OVF_vect){
-
-} // end of TIMER1_OVF_vect
+ISR (TIMER1_OVF) {
+} // end of TIMER1_OVF
 
 // ISR: Hsync pulse ... this interrupt merely wakes us up
-ISR (TIMER2_OVF_vect)
-{
-//  if (count % div1 == 0) reg1 = lfsr(reg1, r1t1 , r1t2, (count >> mod1) & 1);
-//  if (count % div2 == 0) reg2 = lfsr(reg2, r2t1 , r2t2, (count >> mod2) & 1);
-//  if (count % div3 == 0) reg3 = lfsr(reg3, r3t1 , r3t2, (count >> mod3) & 1);
-//  PORTD = B00000011;
-//  PORTD |= (((reg1 & 1) << 7) | ((reg2 & 1) << 6) | ((reg3 & 1) << 5));
-//  count++;
-} // end of TIMER2_OVF_vect
+ISR (TIMER2_OVF) {
+} // end of TIMER2_OVF
 
-void loop()
-{
-  
-//  if (Serial.available() >= 2) {
-//    Serial.println("Byte RCV'd");
-//    addr = Serial.read();
-//    value = Serial.read();
-//
-//    switch (addr) {
-//      case 0: // reg1 tap1
-//        r1t1 = value;
-//        break;
-//      case 1:// reg1 tap2
-//        r1t2 = value;
-//        break;
-//      case 2:// reg2 tap1
-//        r2t1 = value;
-//        break;
-//      case 3:// reg2 tap2
-//        r2t2 = value;
-//        break;
-//      case 4:// reg3 tap1
-//        r3t1 = value;
-//        break;
-//      case 5:// reg3 tap2
-//        r3t2 = value;
-//        break;
-//      case 6: // mod1
-//        mod1 = value;
-//        break;
-//      case 7: //mod2
-//        mod2 = value;
-//        break;
-//      case 8: //mod3
-//        mod3 = value;
-//        break;
-//      case 9: //div1
-//        div1 = value;
-//        break;
-//      case 10: //div2
-//        div2 = value;
-//        break;
-//      case 11: //div3
-//        div3 = value;
-//        break;
-//    }
-//  }
-
+void loop() {
   // sleep to ensure we start up in a predictable way
-  sleep_mode ();
+  sleep_mode();
 }  // end of loop
-
-long lfsr(long reg, byte tap1, byte tap2, boolean mod) {
-  if (tap2 != 0) return ((reg >> tap1 ^ reg >> tap2 ^ mod) & 1) | (reg << 1);
-  else return ((reg >> tap1 ^ mod) & 1) | (reg << 1);
-}
 
