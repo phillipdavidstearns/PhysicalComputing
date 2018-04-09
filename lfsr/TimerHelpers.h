@@ -38,7 +38,7 @@
 
 namespace Timer0
 {
- //TCCR0A, TCCR0B
+//TCCR0A, TCCR0B
 const byte Modes [8] [2] =
 {
 
