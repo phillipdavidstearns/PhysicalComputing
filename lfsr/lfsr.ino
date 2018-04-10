@@ -102,7 +102,7 @@ void loop() {
 
 
 void serial() {
-  if (Serial.available() == 2) {
+  if (Serial.available() >= 2) {
     //    Serial.println("Byte RCV'd");
     // get incoming bytes if there are two or more in the queue/buffer:
     addr = Serial.read();
