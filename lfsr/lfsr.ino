@@ -1,13 +1,16 @@
 // include the nifty TimerHelpers written by Nick Gammon
 #include "TimerHelpers.h"
 
-#define OUT1 8
-#define OUT2 9
-#define OUT3 10
-#define INTERRUPT 2
+//output pin definitions
+#define OUT1 8 //register 1 out
+#define OUT2 9 //register 2 out
+#define OUT3 10 //register 3 out
+
+//intput pin definitions
+#define INTERRUPT 2 // using the interrupt on pin 2 to trigger lfsr reset
 
 //master clock
-volatile unsigned long mc = 0;
+volatile long mc = 0;
 
 // used for setting parameters vis serial
 byte addr = 0;
@@ -51,9 +54,9 @@ bool lc2 = 0;
 bool lc3 = 0;
 
 //divide by n used to trigger lfsr
-byte d1 = 0;
-byte d2 = 0;
-byte d3 = 0;
+byte d1 = 2;
+byte d2 = 3;
+byte d3 = 4;
 
 //output counters for sub octaves
 byte co1 = 0;
@@ -74,6 +77,8 @@ byte o1 = 0;
 byte o2 = 0;
 byte o3 = 0;
 
+bool dn = false;
+
 //////////////////////////////////////////////////////////////////////////////
 
 void setup() {
@@ -90,7 +95,7 @@ void setup() {
 
   //open serial communication
   Serial.begin(115200);
-
+  
   attachInterrupt(digitalPinToInterrupt(INTERRUPT), pinISR, RISING);
 }
 
@@ -188,34 +193,38 @@ void serial() {
   }
 }
 
+
 ISR (TIMER1_OVF_vect) {
 
   //core voices
-  tc1 = mc >> q1 & 1; //shift and mask the masterclock to get current clock state
-  if (tc1 && !lc1) c1++; //rising edge triggers advance of counter
-  lc1 = tc1; //current state becomes last state
-  if (c1 % d1 == 0) r1 = lfsr(r1, r1t1, r1t2, m1); //divide by n (d1) and advance the LFSR
-  tco1 = r1 & 1; //mask the LSB of the register and set current state
-  if (tco1 && !lco1) co1++; //rising edge trigger advance of counter
-  lco1 = tco1; //current state becomes last state
+//  tc1 = mc >> q1 & 1; //shift and mask the masterclock to get current clock state
+//  if (tc1 && !lc1) c1++; //rising edge triggers advance of counter
+//  lc1 = tc1; //current state becomes last state
+//  if (c1 % d1 == 0) r1 = lfsr(r1, r1t1, r1t2, c1 >> m1 & 1); //divide by n (d1) and advance the LFSR
+//  tco1 = r1 & 1; //mask the LSB of the register and set current state
+//  if (tco1 && !lco1) co1++; //rising edge trigger advance of counter
+//  lco1 = tco1; //current state becomes last state
+//
+//  tc2 = mc >> q2 & 1;
+//  if (tc2 && !lc2) c2++;
+//  lc2 = tc2;
+//  if (c2 % d2 == 0) r2 = lfsr(r2, r2t1, r2t2, c2 >> m2 & 1);
+//  tco2 = r2 & 1;
+//  if (tco2 && !lco2) co2++;
+//  lco2 = tco2;
+//
+//  tc3 = mc >> q3 & 1;
+//  if (tc3 && !lc3) c3++;
+//  lc3 = tc3;
+//  if (c3 % d3 == 0) r3 = lfsr(r3, r3t1, r3t2, c3 >> m3 & 1);
+//  tco3 = r3 & 1;
+//  if (tco3 && !lco3) co3++;
+//  lco3 = tco3;
+//
+//  PORTB = (co1 & 1) | (co2 & 1) << 1 | (co3 & 1) << 2;
+PORTB = mc;
 
-  tc2 = mc >> q2 & 1;
-  if (tc2 && !lc2) c2++;
-  lc2 = tc2;
-  if (c2 % d2 == 0) r2 = lfsr(r2, r2t1, r2t2, m2);
-  tco2 = r2 & 1;
-  if (tco2 && !lco2) co2++;
-  lco2 = tco2;
 
-  tc3 = mc >> q3 & 1;
-  if (tc3 && !lc3) c3++;
-  lc3 = tc3;
-  if (c3 % d3 == 0) r3 = lfsr(r3, r3t1, r3t2, m3);
-  tco3 = r3 & 1;
-  if (tco3 && !lco3) co3++;
-  lco3 = tco3;
-
-  PORTB = (co1 >> o1 & 1) | (co2 >> o2 & 1) | (co3 >> o3 & 1) << 1;
   mc++;
 }
 
@@ -228,6 +237,6 @@ void pinISR() {
 long lfsr(long r, byte t1, byte t2, byte m) {
   if (t1 == 0) return r;
   else if (t2 == 0) return (((r >> t1) ^ m) & 1) | (r << 1);
-  else return (((r >> t1) ^ (r >> t2) ^ m) & 1) | (r << 1);
+  else return ((r >> t1 & 1) ^ (r >> t2 & 1) ^ (m & 1)) | (r << 1);
 }
 

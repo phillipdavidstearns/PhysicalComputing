@@ -1,5 +1,5 @@
 //Timer1 used to handle internal clocking of the registers
-#include <musicAtoms.h>
+//#include <musicAtoms.h>
 #include <TimerOne.h>
 
 #define REG_L_OUT 2
